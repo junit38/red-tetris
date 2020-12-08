@@ -1,7 +1,8 @@
 import React from "react";
 import { connect } from 'react-redux'
 import { BrowserRouter as HashRouter, Switch, Route } from "react-router-dom";
-import { OnBoarding, Tetris } from '../components/test'
+import { Tetris } from '../components/Tetris'
+import { OnBoarding } from '../components/OnBoarding'
 
 const App = ({message}) => {
   return (

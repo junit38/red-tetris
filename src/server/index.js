@@ -30,10 +30,11 @@ const initApp = (app, params, cb) => {
 const LAUNCH_GAME_EVENT = "launchGame";
 const GET_ROOM_ID_EVENT = "getRoomId";
 const GET_GAME_EVENT = "getGame";
+const GET_GAMES_EVENT = "getGames";
 const GAME_ERROR_EVENT = "gameError";
 
 const initEngine = io => {
-  const rooms = [];
+  let rooms = [];
 
   io.on('connection', function(socket){
     loginfo("Socket connected: " + socket.id)
@@ -47,7 +48,7 @@ const initEngine = io => {
 
     if (room && player_name)
     {
-      const index = getRoomIndex(room);
+      const index = getRoomIndex(rooms, room);
       if (index != -1)
       {
         if (rooms[index].users.indexOf(player_name) != -1)
@@ -63,11 +64,21 @@ const initEngine = io => {
           rooms[index].users.push(player_name);
         }
       }
+      else {
+        socket.join(room);
+        rooms.push({
+          id: room,
+          launched: false,
+          admin: player_name,
+          users: [player_name]
+        });
+        getGames();
+      }
     }
     else
       socket.join(socket.id)
 
-    function getRoomIndex(room) {
+    function getRoomIndex(rooms, room) {
       for (let i = 0; i < rooms.length; i++) {
         if (rooms[i].id == room)
           return (i);
@@ -80,7 +91,7 @@ const initEngine = io => {
       if (room && player_name)
       {
         socket.leave(room);
-        const index = getRoomIndex(room);
+        const index = getRoomIndex(rooms, room);
         if (index != -1)
         {
           const userIndex = rooms[index].users.indexOf(player_name);
@@ -89,20 +100,20 @@ const initEngine = io => {
             rooms[index].admin = rooms[index].users[0];
           if (rooms[index].users.length == 0)
             rooms.splice(index, 1);
-          sendGameEvent();
+          getGame();
+          getGames();
         }
       }
       else
         socket.leave(socket.id);
     });
 
-    function sendGameEvent() {
+    function getGame() {
       if (room) {
-        const index = getRoomIndex(room);
+        const index = getRoomIndex(rooms, room);
         if (index != -1)
         {
           const data = rooms[index];
-          console.log(data);
           io.in(room).emit(GET_GAME_EVENT, data);
         }
       }
@@ -110,11 +121,29 @@ const initEngine = io => {
 
     socket.on(GET_GAME_EVENT, () => {
       console.log('Get Game')
-      sendGameEvent();
+      getGame();
     });
+
+    function getGames() {
+      io.emit(GET_GAMES_EVENT, rooms);
+    }
+
+    socket.on(GET_GAMES_EVENT, () => {
+      console.log('Get Game')
+      getGames();
+    });
+
+    function launchGame(rooms, room) {
+      const index = getRoomIndex(rooms, room);
+      if (index != -1)
+        rooms[index].launched = true;
+      return (rooms);
+    }
 
     socket.on(LAUNCH_GAME_EVENT, (data) => {
       console.log('Launch Game')
+      rooms = launchGame(rooms, room);
+      getGames();
       io.in(room).emit(LAUNCH_GAME_EVENT, data);
     });
 
@@ -126,7 +155,7 @@ const initEngine = io => {
       return (-1);
     }
 
-    socket.on(GET_ROOM_ID_EVENT, () => {
+    function getRoomId(rooms) {
       console.log('Get Room ID')
       console.log(rooms);
       let id = 0;
@@ -145,6 +174,12 @@ const initEngine = io => {
       io.in(socket.id).emit(GET_ROOM_ID_EVENT, {
         room: room
       });
+      return (rooms);
+    }
+
+    socket.on(GET_ROOM_ID_EVENT, () => {
+      rooms = getRoomId(rooms);
+      getGames();
     });
   })
 }
