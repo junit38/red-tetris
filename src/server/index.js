@@ -3,6 +3,8 @@ import debug from 'debug'
 
 const logerror = debug('tetris:error')
   , loginfo = debug('tetris:info')
+  , ioController = require('./ioController')
+  , tools = require('./tools')
 
 const initApp = (app, params, cb) => {
   const {host, port} = params
@@ -48,7 +50,7 @@ const initEngine = io => {
 
     if (room && player_name)
     {
-      const index = getRoomIndex(rooms, room);
+      const index = tools.getRoomIndex(rooms, room);
       if (index != -1)
       {
         if (rooms[index].users.indexOf(player_name) != -1)
@@ -72,26 +74,20 @@ const initEngine = io => {
           admin: player_name,
           users: [player_name]
         });
-        getGames();
+        ioController.getGames(rooms, io);
       }
     }
     else
       socket.join(socket.id)
 
-    function getRoomIndex(rooms, room) {
-      for (let i = 0; i < rooms.length; i++) {
-        if (rooms[i].id == room)
-          return (i);
-      }
-      return (-1);
-    }
-
     socket.on("disconnect", () => {
       console.log(`Client ${socket.id} diconnected`);
+      console.log(room);
+      console.log(player_name);
       if (room && player_name)
       {
         socket.leave(room);
-        const index = getRoomIndex(rooms, room);
+        const index = tools.getRoomIndex(rooms, room);
         if (index != -1)
         {
           const userIndex = rooms[index].users.indexOf(player_name);
@@ -100,86 +96,31 @@ const initEngine = io => {
             rooms[index].admin = rooms[index].users[0];
           if (rooms[index].users.length == 0)
             rooms.splice(index, 1);
-          getGame();
-          getGames();
+          ioController.getGame(rooms, room, io);
+          ioController.getGames(rooms, io);
         }
       }
       else
         socket.leave(socket.id);
     });
 
-    function getGame() {
-      if (room) {
-        const index = getRoomIndex(rooms, room);
-        if (index != -1)
-        {
-          const data = rooms[index];
-          io.in(room).emit(GET_GAME_EVENT, data);
-        }
-      }
-    }
-
     socket.on(GET_GAME_EVENT, () => {
-      console.log('Get Game')
-      getGame();
+      ioController.getGame(rooms, room, io);
     });
-
-    function getGames() {
-      io.emit(GET_GAMES_EVENT, rooms);
-    }
 
     socket.on(GET_GAMES_EVENT, () => {
-      console.log('Get Game')
-      getGames();
+      ioController.getGames(rooms, io);
     });
 
-    function launchGame(rooms, room) {
-      const index = getRoomIndex(rooms, room);
-      if (index != -1)
-        rooms[index].launched = true;
-      return (rooms);
-    }
-
     socket.on(LAUNCH_GAME_EVENT, (data) => {
-      console.log('Launch Game')
-      rooms = launchGame(rooms, room);
-      getGames();
+      rooms = ioController.launchGame(rooms, room);
+      ioController.getGames(rooms, io);
       io.in(room).emit(LAUNCH_GAME_EVENT, data);
     });
 
-    function findRoom(room) {
-      for (let i = 0; i < rooms.length; i++) {
-        if (rooms[i].id == room)
-          return (1);
-      }
-      return (-1);
-    }
-
-    function getRoomId(rooms) {
-      console.log('Get Room ID')
-      console.log(rooms);
-      let id = 0;
-      let room = 'room_' + id;
-      while (findRoom(room) != -1)
-      {
-        id = id + 1
-        room = 'room_' + id;
-      }
-      rooms.push({
-        id: room,
-        launched: false,
-        admin: null,
-        users: []
-      });
-      io.in(socket.id).emit(GET_ROOM_ID_EVENT, {
-        room: room
-      });
-      return (rooms);
-    }
-
     socket.on(GET_ROOM_ID_EVENT, () => {
-      rooms = getRoomId(rooms);
-      getGames();
+      rooms = ioController.getRoomId(rooms, io, socket);
+      ioController.getGames(rooms, io);
     });
   })
 }
