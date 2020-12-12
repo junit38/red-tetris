@@ -1,14 +1,12 @@
 import debug from 'debug'
 
-const logerror = debug('tetris:error')
-  , loginfo = debug('tetris:info')
-  , tools = require('./tools.js')
+const tools = require('./tools')
 
 const LAUNCH_GAME_EVENT = "launchGame";
 const GET_GAME_EVENT = "getGame";
 const GET_GAMES_EVENT = "getGames";
 const GAME_ERROR_EVENT = "gameError";
-const GET_ROOM_ID_EVENT = "getRoomId";
+const GET_GAME_ID_EVENT = "getGameId";
 
 exports.getGame = function(rooms, room, io) {
   if (room) {
@@ -26,7 +24,7 @@ exports.getGames = function(rooms, io) {
 }
 
 exports.launchGame = function(rooms, room) {
-  const index = getRoomIndex(rooms, room);
+  const index = tools.getRoomIndex(rooms, room);
   if (index != -1)
     rooms[index].launched = true;
   return (rooms);
@@ -55,7 +53,7 @@ exports.getRoomId = function (rooms, io, socket) {
     admin: null,
     users: []
   });
-  io.in(socket.id).emit(GET_ROOM_ID_EVENT, {
+  io.in(socket.id).emit(GET_GAME_ID_EVENT, {
     room: room
   });
   return (rooms);
