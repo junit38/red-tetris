@@ -6,7 +6,7 @@ const LAUNCH_GAME_EVENT = "launchGame";
 const GET_GAME_EVENT = "getGame";
 const GAME_ERROR_EVENT = "gameError";
 
-const getGame = (room, player_name) => {
+const GameService = (room, player_name) => {
   const [game, setGame] = useState(null);
   const [error, setError] = useState(null);
   const [launched, setLaunched] = useState(null);
@@ -40,4 +40,4 @@ const getGame = (room, player_name) => {
   return { game, error, launched, launchGame };
 };
 
-export default getGame;
+export default GameService;

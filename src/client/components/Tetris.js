@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { Board } from './Board';
-import getGame from "../services/getGame";
+import GameService from "../services/GameService";
 
 export const Tetris = () => {
   const location = useLocation();
@@ -10,7 +10,7 @@ export const Tetris = () => {
   const player_name_unformated = location.pathname.substring(1).split('[')[1]
   const index = player_name_unformated.indexOf(']')
   const player_name = player_name_unformated.substring(0, index);
-  const {game, error, launched, launchGame} = getGame(room, player_name)
+  const {game, error, launched, launchGame} = GameService(room, player_name)
 
   if (error)
     return (
