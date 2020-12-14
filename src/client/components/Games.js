@@ -20,8 +20,13 @@ export const Games = (props) => {
   {
     if (games[i].launched == false)
       elems.push(
-        <div key={i} onClick={() => selectGame(games[i])}>
-          {games[i].id}
+        <div className="card text-white bg-primary mb-3" style={{maxWidth: "20rem"}} key={i}>
+          <div className="card-header">{games[i].id}</div>
+          <div className="card-body">
+            <h4 className="card-title">{games[i].id}</h4>
+            <p className="card-text">{games[i].users.length} players</p>
+            <button type="button" className="btn btn-secondary" onClick={() => selectGame(games[i])}>Join</button>
+          </div>
         </div>
       )
   }

@@ -7,14 +7,17 @@ export const Board = (props) => {
   const game = props.game;
 
   return (
-    <div>
-      <h3>{room}</h3>
-      <p>{player_name}</p>
-      <p>{game && game.users ? game.users.length : 0} players</p>
-      {game.admin == player_name ?
-        <button onClick={launchGame}>Launch</button>
-        : ''
-      }
+    <div className="jumbotron">
+      <div className="card border-primary mb-3">
+        <div className="card-header">{game.id}</div>
+        <div className="card-body">
+          <h4 className="card-title">{game.id}</h4>
+          <p className="card-text">{game.users.length} players</p>
+          { game.admin == player_name ?
+            <button type="button" className="btn btn-secondary" onClick={launchGame}>Launch</button>
+          : '' }
+        </div>
+      </div>
     </div>
   )
 }

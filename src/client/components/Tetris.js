@@ -14,8 +14,8 @@ export const Tetris = () => {
 
   if (error)
     return (
-      <div>
-        <h2>{error}</h2>
+      <div class="jumbotron">
+        <h3>{error}</h3>
         <Link to={`/`}>
           Return
         </Link>
@@ -31,6 +31,8 @@ export const Tetris = () => {
     )
   else
     return (
-      <div>Loading...</div>
+      <div class="jumbotron">
+        <h3>Loading...</h3>
+      </div>
     )
 }

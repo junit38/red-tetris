@@ -4,6 +4,8 @@ const loginfo = debug('tetris:info')
   , ioController = require('./ioController')
   , tools = require('./tools')
 
+const GAME_ERROR_EVENT = "gameError";
+
 exports.connect = function(rooms, room, player_name, socket, io) {
   loginfo("Socket connected: " + socket.id)
 
