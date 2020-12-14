@@ -31,7 +31,7 @@ export const Games = (props) => {
       )
   }
 
-  if (games.length)
+  if (getGamesLength())
   {
     return (
       <div>

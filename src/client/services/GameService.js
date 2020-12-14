@@ -25,6 +25,10 @@ const GameService = (room, player_name) => {
       setError(data.message)
     });
 
+    socketRef.current.on(LAUNCH_GAME_EVENT, (data) => {
+      setLaunched(true);
+    });
+
     socketRef.current.emit(GET_GAME_EVENT);
 
     return () => {

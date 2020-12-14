@@ -4,6 +4,8 @@ import debug from 'debug'
 const logerror = debug('tetris:error')
   , loginfo = debug('tetris:info')
   , ioRoutes = require('./ioRoutes')
+  , ioConnect = require('./ioConnect')
+  , events = require('events')
 
 const initApp = (app, params, cb) => {
   const {host, port} = params
@@ -29,7 +31,23 @@ const initApp = (app, params, cb) => {
 }
 
 const initEngine = io => {
-  ioRoutes.initEngine(io);
+  let rooms = [];
+
+  exports.io = io;
+
+  io.on('connection', function(socket) {
+    exports.socket = socket;
+
+    let { room, player_name } = socket.handshake.query;
+
+    rooms = ioConnect.connect(rooms, room, player_name);
+
+    socket.on("disconnect", () => {
+      rooms = ioConnect.disconnect(rooms, room, player_name)
+    });
+
+    ioRoutes.initRoute(socket, rooms, room, player_name);
+  });
 }
 
 export function create(params){

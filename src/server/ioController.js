@@ -1,6 +1,7 @@
 import debug from 'debug'
 
 const tools = require('./tools')
+  , app = require('./index.js');
 
 const LAUNCH_GAME_EVENT = "launchGame";
 const GET_GAME_EVENT = "getGame";
@@ -8,19 +9,19 @@ const GET_GAMES_EVENT = "getGames";
 const GAME_ERROR_EVENT = "gameError";
 const GET_GAME_ID_EVENT = "getGameId";
 
-exports.getGame = function(rooms, room, io) {
+exports.getGame = function(rooms, room) {
   if (room) {
     const index = tools.getRoomIndex(rooms, room);
     if (index != -1)
     {
       const data = rooms[index];
-      io.in(room).emit(GET_GAME_EVENT, data);
+      app.io.in(room).emit(GET_GAME_EVENT, data);
     }
   }
 }
 
-exports.getGames = function(rooms, io) {
-  io.emit(GET_GAMES_EVENT, rooms);
+exports.getGames = function(rooms) {
+  app.io.emit(GET_GAMES_EVENT, rooms);
 }
 
 exports.launchGame = function(rooms, room) {
@@ -30,7 +31,7 @@ exports.launchGame = function(rooms, room) {
   return (rooms);
 }
 
-exports.getRoomId = function (rooms, io, socket) {
+exports.getRoomId = function (rooms, socket) {
   let id = 0;
   let room = 'room_' + id;
 
@@ -53,7 +54,7 @@ exports.getRoomId = function (rooms, io, socket) {
     admin: null,
     users: []
   });
-  io.in(socket.id).emit(GET_GAME_ID_EVENT, {
+  app.io.in(app.socket.id).emit(GET_GAME_ID_EVENT, {
     room: room
   });
   return (rooms);

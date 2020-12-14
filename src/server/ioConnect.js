@@ -3,17 +3,18 @@ import debug from 'debug'
 const loginfo = debug('tetris:info')
   , ioController = require('./ioController')
   , tools = require('./tools')
+  , app = require('./index.js')
 
 const GAME_ERROR_EVENT = "gameError";
 
-exports.connect = function(rooms, room, player_name, socket, io) {
-  loginfo("Socket connected: " + socket.id)
+exports.connect = function(rooms, room, player_name) {
+  loginfo("Socket connected: " + app.socket.id)
 
-  socket.on('action', (action) => {
-    if(action.type === 'server/ping'){
-      socket.emit('action', {type: 'pong'})
-    }
-  })
+  // app.socket.on('action', (action) => {
+  //   if(action.type === 'server/ping'){
+  //     app.socket.emit('action', {type: 'pong'})
+  //   }
+  // })
 
   if (room && player_name)
   {
@@ -22,38 +23,45 @@ exports.connect = function(rooms, room, player_name, socket, io) {
     {
       if (rooms[index].users.indexOf(player_name) != -1)
       {
-        socket.emit(GAME_ERROR_EVENT, {message: 'Name already used.'});
+        app.socket.emit(GAME_ERROR_EVENT, {message: 'Name already used.'});
+        room = null;
+        player_name = null;
+      }
+      else if (rooms[index].launched)
+      {
+        app.socket.emit(GAME_ERROR_EVENT, {message: 'Game already launched'});
         room = null;
         player_name = null;
       }
       else {
-        socket.join(room);
+        app.socket.join(room);
         if (rooms[index].admin == null)
           rooms[index].admin = player_name;
         rooms[index].users.push(player_name);
       }
     }
     else {
-      socket.join(room);
+      app.socket.join(room);
       rooms.push({
         id: room,
         launched: false,
         admin: player_name,
         users: [player_name]
       });
-      ioController.getGames(rooms, io);
+      ioController.getGames(rooms);
     }
   }
   else
-    socket.join(socket.id)
+    app.socket.join(app.socket.id)
   return (rooms);
 }
 
-exports.disconnect = function(rooms, room, player_name, socket, io) {
-  console.log(`Client ${socket.id} diconnected`);
+exports.disconnect = function(rooms, room, player_name) {
+  console.log(`Client ${app.socket.id} diconnected`);
+
   if (room && player_name)
   {
-    socket.leave(room);
+    app.socket.leave(room);
     const index = tools.getRoomIndex(rooms, room);
     if (index != -1)
     {
@@ -63,11 +71,11 @@ exports.disconnect = function(rooms, room, player_name, socket, io) {
         rooms[index].admin = rooms[index].users[0];
       if (rooms[index].users.length == 0)
         rooms.splice(index, 1);
-      ioController.getGame(rooms, room, io);
-      ioController.getGames(rooms, io);
+      ioController.getGame(rooms, room);
+      ioController.getGames(rooms);
     }
   }
   else
-    socket.leave(socket.id);
+    app.socket.leave(app.socket.id);
   return (rooms);
 }
