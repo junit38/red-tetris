@@ -3,9 +3,8 @@ import debug from 'debug'
 const loginfo = debug('tetris:info')
   , ioController = require('./ioController')
   , tools = require('./tools')
+  , ioRoutes = require('./ioRoutes')
   , app = require('./index.js')
-
-const GAME_ERROR_EVENT = "gameError";
 
 exports.connect = function(rooms, room, player_name) {
   loginfo("Socket connected: " + app.socket.id)
@@ -23,13 +22,13 @@ exports.connect = function(rooms, room, player_name) {
     {
       if (rooms[index].users.indexOf(player_name) != -1)
       {
-        app.socket.emit(GAME_ERROR_EVENT, {message: 'Name already used.'});
+        app.socket.emit(ioRoutes.GAME_ERROR_EVENT, {message: 'Name already used.'});
         room = null;
         player_name = null;
       }
       else if (rooms[index].launched)
       {
-        app.socket.emit(GAME_ERROR_EVENT, {message: 'Game already launched'});
+        app.socket.emit(ioRoutes.GAME_ERROR_EVENT, {message: 'Game already launched'});
         room = null;
         player_name = null;
       }

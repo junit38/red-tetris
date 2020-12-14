@@ -20,7 +20,9 @@ export const Games = (props) => {
   {
     if (games[i].launched == false)
       elems.push(
-        <div className="card text-white bg-primary mb-3" style={{maxWidth: "20rem"}} key={i}>
+        <div className="card text-white bg-primary mb-3"
+             style={{maxWidth: "20rem", minWidth: "20rem", display: "inline-block", marginRight: "20px"}}
+             key={i}>
           <div className="card-header">{games[i].id}</div>
           <div className="card-body">
             <h4 className="card-title">{games[i].id}</h4>

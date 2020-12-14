@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { Board } from './Board';
+import { Game } from './Game';
 import GameService from "../services/GameService";
 
 export const Tetris = () => {
@@ -27,7 +28,7 @@ export const Tetris = () => {
     )
   else if (launched)
     return (
-      <div>Launched</div>
+      <Game game={game} room={room} player_name={player_name}/>
     )
   else
     return (

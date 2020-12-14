@@ -31,3 +31,9 @@ exports.initRoute = function(socket, rooms, room, player_name) {
     ioController.getGames(rooms);
   });
 }
+
+exports.LAUNCH_GAME_EVENT = LAUNCH_GAME_EVENT;
+exports.GET_GAME_ID_EVENT = GET_GAME_ID_EVENT;
+exports.GET_GAME_EVENT = GET_GAME_EVENT;
+exports.GET_GAMES_EVENT = GET_GAMES_EVENT;
+exports.GAME_ERROR_EVENT = GAME_ERROR_EVENT;

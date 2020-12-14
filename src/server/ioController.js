@@ -1,13 +1,8 @@
 import debug from 'debug'
 
 const tools = require('./tools')
-  , app = require('./index.js');
-
-const LAUNCH_GAME_EVENT = "launchGame";
-const GET_GAME_EVENT = "getGame";
-const GET_GAMES_EVENT = "getGames";
-const GAME_ERROR_EVENT = "gameError";
-const GET_GAME_ID_EVENT = "getGameId";
+  , app = require('./index.js')
+  , ioRoutes = require('./ioRoutes')
 
 exports.getGame = function(rooms, room) {
   if (room) {
@@ -15,13 +10,13 @@ exports.getGame = function(rooms, room) {
     if (index != -1)
     {
       const data = rooms[index];
-      app.io.in(room).emit(GET_GAME_EVENT, data);
+      app.io.in(room).emit(ioRoutes.GET_GAME_EVENT, data);
     }
   }
 }
 
 exports.getGames = function(rooms) {
-  app.io.emit(GET_GAMES_EVENT, rooms);
+  app.io.emit(ioRoutes.GET_GAMES_EVENT, rooms);
 }
 
 exports.launchGame = function(rooms, room) {
@@ -54,7 +49,7 @@ exports.getRoomId = function (rooms, socket) {
     admin: null,
     users: []
   });
-  app.io.in(app.socket.id).emit(GET_GAME_ID_EVENT, {
+  app.io.in(app.socket.id).emit(ioRoutes.GET_GAME_ID_EVENT, {
     room: room
   });
   return (rooms);
