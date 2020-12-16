@@ -26,11 +26,11 @@ exports.launchGame = function(rooms, room) {
   return (rooms);
 }
 
-exports.getRoomId = function (rooms, socket) {
+exports.getGameId = function (rooms, socket) {
   let id = 0;
   let room = 'room_' + id;
 
-  function findRoom(room) {
+  function findGame(room) {
     for (let i = 0; i < rooms.length; i++) {
       if (rooms[i].id == room)
         return (1);
@@ -38,7 +38,7 @@ exports.getRoomId = function (rooms, socket) {
     return (-1);
   }
 
-  while (findRoom(room) != -1)
+  while (findGame(room) != -1)
   {
     id = id + 1
     room = 'room_' + id;
@@ -53,4 +53,14 @@ exports.getRoomId = function (rooms, socket) {
     room: room
   });
   return (rooms);
+}
+
+let jsonPieces = require('./json/pieces.json');
+
+exports.getNewPiece = function(room) {
+  if (room) {
+    let rand = Math.floor(Math.random() * jsonPieces.length);
+    const data = jsonPieces[rand];
+    app.io.in(room).emit(ioRoutes.NEW_PIECE_EVENT, data);
+  }
 }

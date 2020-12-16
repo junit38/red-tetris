@@ -1,16 +1,46 @@
 import React, {useEffect,useState} from 'react'
 
+const NEW_PIECE_EVENT = "newPiece";
+
 export const Game = (props) => {
   const game = props.game;
-  const [show, setShow] = useState(false);
-  const [piece, setPiece] = useState(null);
+  const getNewPiece = props.getNewPiece;
+  const getSocketRef = props.getSocketRef;
   const [pieces, setPieces] = useState([]);
+  const [piecesWaiting, setPiecesWaiting] = useState([]);
   const [tetrisElem, setTetrisElem] = useState([]);
+  const socketRef = getSocketRef();
   let tetris = [];
+  let piece = null;
+  let piecesWaitingDuplicate;
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown, false);
+
+    getNewPiece();
+
+    socketRef.current.on(NEW_PIECE_EVENT, (data) => {
+      let piecesDuplicate = piecesWaiting;
+      piecesDuplicate.push({...data});
+      setPiecesWaiting(piecesDuplicate);
+      if (!piece)
+      {
+        let piecesDuplicate = piecesWaiting;
+        piece = piecesDuplicate.shift();
+        setPiecesWaiting(piecesDuplicate);
+        setTetrisElem(getTetris());
+      }
+    });
+
+    const interval = setInterval(() => {
+      checkPiece();
+      if (piece.x + getFormLength(piece) - 1 < 19 && canMoveDown())
+        piece.x++;
+      setTetrisElem(getTetris());
+    }, 1000);
+
     return () => {
+      clearInterval(interval);
       document.removeEventListener("keydown", handleKeyDown, false);
     };
   }, []);
@@ -31,35 +61,6 @@ export const Game = (props) => {
     border: "0.5px solid gray",
     display: "inline-block"
   }
-
-  if (!pieces.length)
-    setPieces([{
-      form: [
-        [1, 1, 1, 1],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-      ],
-      x: 19,
-      y: 0,
-      color: "orange"
-    }]);
-
-  game.piecesWaiting = [];
-  game.piecesWaiting.push({
-    form: [
-      [1, 1, 1, 1],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ],
-    x: 0,
-    y: 4,
-    color: "red"
-  });
-
-  if (!piece)
-    setPiece(game.piecesWaiting[0]);
 
   const isInPiece = (piece, i, j) => {
     for (let k = 0; k < piece.form.length; k++)
@@ -132,25 +133,53 @@ export const Game = (props) => {
   }
 
   const checkPiece = () => {
-    if (piece.x == 19 || !canMoveDown())
+    if (piece.x + getFormLength(piece) - 1 == 19 || !canMoveDown())
     {
       let piecesDuplicate = pieces;
-      piecesDuplicate.push({...piece});
+      piecesDuplicate.push(piece);
       setPieces(piecesDuplicate);
-      piece.x = 0;
-      piece.y = 4;
-      setPiece(piece);
+      if (!piecesWaiting.length)
+        getNewPiece()
+      else
+      {
+        piecesDuplicate = piecesWaiting;
+        piece = piecesDuplicate.shift();
+        setPiecesWaiting(piecesDuplicate);
+        setTetrisElem(getTetris());
+      }
     }
+  }
+
+  const getFormLength = (piece) => {
+    let size = 0;
+    for (let i = 0; i < piece.form.length; i++)
+    {
+      let contain = false
+      for (let j = 0; j < piece.form[i].length; j++)
+      {
+        if (piece.form[i][j] == 1)
+          contain = true;
+      }
+      if (contain)
+        size++;
+    }
+    return (size)
   }
 
   const handleKeyDown = (event) => {
     event.preventDefault();
     event.stopPropagation();
+    const KEY_SPACE_EVENT = 32;
     const KEY_LEFT_EVENT = 37;
     const KEY_UP_EVENT = 38;
     const KEY_RIGHT_EVENT = 39;
     const KEY_DOWN_EVENT = 40;
-    if (event.keyCode == KEY_LEFT_EVENT) {
+    if (event.keyCode == KEY_SPACE_EVENT)
+    {
+      while (piece.x + getFormLength(piece) - 1 < 19 && canMoveDown())
+        piece.x++;
+    }
+    else if (event.keyCode == KEY_LEFT_EVENT) {
       if (piece.y > 0 && canMoveLeft())
         piece.y--;
     }
@@ -159,12 +188,10 @@ export const Game = (props) => {
         piece.y++;
     }
     else if (event.keyCode == KEY_DOWN_EVENT) {
-      if (piece.x < 19 && canMoveDown())
+      if (piece.x + getFormLength(piece) - 1 < 19 && canMoveDown())
         piece.x++;
     }
-    setPiece(piece);
     setTetrisElem(getTetris());
-    checkPiece();
   }
 
   const getTetris = () => {
@@ -196,7 +223,7 @@ export const Game = (props) => {
   return (
     <div className="jumbotron" onKeyDown={handleKeyDown}>
       <h3>{game.users.length}</h3>
-      {show ? piece.x + ' ' + piece.y : ''}
+      <h3>{piecesWaiting.length}</h3>
       <div className="tetris" style={tetrisStyle}>{tetrisElem}</div>
     </div>
   )

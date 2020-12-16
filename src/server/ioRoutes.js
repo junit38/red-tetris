@@ -10,6 +10,7 @@ const GET_GAME_ID_EVENT = "getGameId";
 const GET_GAME_EVENT = "getGame";
 const GET_GAMES_EVENT = "getGames";
 const GAME_ERROR_EVENT = "gameError";
+const NEW_PIECE_EVENT = "newPiece";
 
 exports.initRoute = function(socket, rooms, room, player_name) {
   socket.on(GET_GAME_EVENT, () => {
@@ -27,8 +28,12 @@ exports.initRoute = function(socket, rooms, room, player_name) {
   });
 
   socket.on(GET_GAME_ID_EVENT, () => {
-    rooms = ioController.getRoomId(rooms);
+    rooms = ioController.getGameId(rooms);
     ioController.getGames(rooms);
+  });
+
+  socket.on(NEW_PIECE_EVENT, () => {
+    ioController.getNewPiece(room);
   });
 }
 
@@ -37,3 +42,4 @@ exports.GET_GAME_ID_EVENT = GET_GAME_ID_EVENT;
 exports.GET_GAME_EVENT = GET_GAME_EVENT;
 exports.GET_GAMES_EVENT = GET_GAMES_EVENT;
 exports.GAME_ERROR_EVENT = GAME_ERROR_EVENT;
+exports.NEW_PIECE_EVENT = NEW_PIECE_EVENT;

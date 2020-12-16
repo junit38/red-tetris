@@ -5,6 +5,7 @@ const SOCKET_SERVER_URL = "http://0.0.0.0:3004";
 const LAUNCH_GAME_EVENT = "launchGame";
 const GET_GAME_EVENT = "getGame";
 const GAME_ERROR_EVENT = "gameError";
+const NEW_PIECE_EVENT = "newPiece";
 
 const GameService = (room, player_name) => {
   const [game, setGame] = useState(null);
@@ -41,7 +42,15 @@ const GameService = (room, player_name) => {
     socketRef.current.emit(LAUNCH_GAME_EVENT, setLaunchedToTrue);
   }
 
-  return { game, error, launched, launchGame };
+  const getNewPiece = () => {
+    socketRef.current.emit(NEW_PIECE_EVENT);
+  }
+
+  const getSocketRef = () => {
+    return socketRef;
+  }
+
+  return { game, error, launched, launchGame, getNewPiece, getSocketRef };
 };
 
 export default GameService;

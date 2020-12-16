@@ -11,7 +11,7 @@ export const Tetris = () => {
   const player_name_unformated = location.pathname.substring(1).split('[')[1]
   const index = player_name_unformated.indexOf(']')
   const player_name = player_name_unformated.substring(0, index);
-  const {game, error, launched, launchGame} = GameService(room, player_name)
+  const {game, error, launched, launchGame, getNewPiece, getSocketRef} = GameService(room, player_name)
 
   if (error)
     return (
@@ -28,7 +28,7 @@ export const Tetris = () => {
     )
   else if (launched)
     return (
-      <Game game={game} room={room} player_name={player_name}/>
+      <Game game={game} getNewPiece={getNewPiece} getSocketRef={getSocketRef}/>
     )
   else
     return (

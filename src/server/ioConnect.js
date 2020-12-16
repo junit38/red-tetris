@@ -45,7 +45,8 @@ exports.connect = function(rooms, room, player_name) {
         id: room,
         launched: false,
         admin: player_name,
-        users: [player_name]
+        users: [player_name],
+        piecesWaiting: []
       });
       ioController.getGames(rooms);
     }
