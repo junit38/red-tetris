@@ -4,6 +4,7 @@ export const Board = (props) => {
   const room = props.room;
   const player_name = props.player_name;
   const launchGame = props.launchGame;
+  const isGameOver = props.isGameOver;
   const game = props.game;
 
   return (
@@ -13,7 +14,7 @@ export const Board = (props) => {
         <div className="card-body">
           <h4 className="card-title">{game.id}</h4>
           <p className="card-text">{game.users.length} players</p>
-          { game.admin == player_name ?
+          { game && game.admin && game.admin == player_name && game.launched == false ?
             <button type="button" className="btn btn-secondary" onClick={launchGame}>Launch</button>
           : '' }
         </div>

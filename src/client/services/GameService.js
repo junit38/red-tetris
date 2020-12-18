@@ -6,11 +6,11 @@ const LAUNCH_GAME_EVENT = "launchGame";
 const GET_GAME_EVENT = "getGame";
 const GAME_ERROR_EVENT = "gameError";
 const NEW_PIECE_EVENT = "newPiece";
+const GAME_OVER_EVENT = "gameOver";
 
 const GameService = (room, player_name) => {
   const [game, setGame] = useState(null);
   const [error, setError] = useState(null);
-  const [launched, setLaunched] = useState(null);
   const socketRef = useRef();
 
   useEffect(() => {
@@ -26,31 +26,32 @@ const GameService = (room, player_name) => {
       setError(data.message)
     });
 
-    socketRef.current.on(LAUNCH_GAME_EVENT, (data) => {
-      setLaunched(true);
-    });
-
-    socketRef.current.emit(GET_GAME_EVENT);
-
     return () => {
       socketRef.current.disconnect();
     };
   }, [room, player_name]);
 
+  const getGame = () => {
+    socketRef.current.emit(GET_GAME_EVENT);
+  }
+
   const launchGame = () => {
-    const setLaunchedToTrue = setLaunched(true);
-    socketRef.current.emit(LAUNCH_GAME_EVENT, setLaunchedToTrue);
+    socketRef.current.emit(LAUNCH_GAME_EVENT);
   }
 
   const getNewPiece = () => {
     socketRef.current.emit(NEW_PIECE_EVENT);
   }
 
+  const gameOver = () => {
+    socketRef.current.emit(GAME_OVER_EVENT);
+  }
+
   const getSocketRef = () => {
     return socketRef;
   }
 
-  return { game, error, launched, launchGame, getNewPiece, getSocketRef };
+  return { game, getGame, error, launchGame, getNewPiece, gameOver, getSocketRef };
 };
 
 export default GameService;

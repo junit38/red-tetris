@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { Board } from './Board';
@@ -11,7 +11,46 @@ export const Tetris = () => {
   const player_name_unformated = location.pathname.substring(1).split('[')[1]
   const index = player_name_unformated.indexOf(']')
   const player_name = player_name_unformated.substring(0, index);
-  const {game, error, launched, launchGame, getNewPiece, getSocketRef} = GameService(room, player_name)
+  const {game, getGame, error, launchGame, getNewPiece, gameOver, getSocketRef} = GameService(room, player_name)
+
+  useEffect(() => {
+    getGame();
+  })
+
+  const getUser = (game) => {
+    for (let i = 0; i < game.users.length; i++)
+    {
+      if (game.users[i].name == player_name)
+        return game.users[i];
+    }
+    return (null);
+  }
+
+  const getUsersPlaying = (game) => {
+    let usersPlaying = 0;
+    if (game && game.users)
+    {
+      for (let i = 0; i < game.users.length; i++)
+      {
+        if (game.users[i].playing == true)
+          usersPlaying++;
+      }
+    }
+    return (usersPlaying);
+  }
+
+  const isGameOver = (game) => {
+    const user = getUser(game, player_name);
+    if (user && user.playing == false)
+    {
+      alert('Game Over');
+      return true;
+    }
+    else if (user && user.playing == true && getUsersPlaying(game) <= 1
+      && game && getUsersPlaying(game) != game.users.length)
+      alert('You Win');
+    return false;
+  }
 
   if (error)
     return (
@@ -22,13 +61,30 @@ export const Tetris = () => {
         </Link>
       </div>
       )
-  else if (!launched && game)
+  else if (game && !game.launched)
     return (
-      <Board launchGame={launchGame} game={game} room={room} player_name={player_name}/>
+      <Board launchGame={launchGame}
+             game={game}
+             room={room}
+             player_name={player_name}
+             isGameOver={isGameOver}/>
     )
-  else if (launched)
+  else if (game && game.launched && isGameOver(game))
     return (
-      <Game game={game} getNewPiece={getNewPiece} getSocketRef={getSocketRef}/>
+      <div className="jumbotron">
+        <h3>Game Over</h3>
+        <p>Waiting for the end of the game...</p>
+        <Link to={`/`}>
+          Return
+        </Link>
+      </div>
+      )
+  else if (game && game.launched)
+    return (
+      <Game game={game}
+            getNewPiece={getNewPiece}
+            gameOver={gameOver}
+            getSocketRef={getSocketRef}/>
     )
   else
     return (

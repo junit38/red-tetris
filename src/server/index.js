@@ -34,6 +34,7 @@ const initEngine = io => {
   let rooms = [];
 
   exports.io = io;
+  exports.rooms = rooms;
 
   io.on('connection', function(socket) {
     exports.socket = socket;

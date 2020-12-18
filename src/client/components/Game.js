@@ -4,6 +4,7 @@ const NEW_PIECE_EVENT = "newPiece";
 
 export const Game = (props) => {
   const game = props.game;
+  const gameOver = props.gameOver;
   const getNewPiece = props.getNewPiece;
   const getSocketRef = props.getSocketRef;
   const [pieces, setPieces] = useState([]);
@@ -19,6 +20,8 @@ export const Game = (props) => {
 
     getNewPiece();
 
+    // checkGameOver();
+
     socketRef.current.on(NEW_PIECE_EVENT, (data) => {
       let piecesDuplicate = piecesWaiting;
       piecesDuplicate.push({...data});
@@ -27,6 +30,7 @@ export const Game = (props) => {
       {
         let piecesDuplicate = piecesWaiting;
         piece = piecesDuplicate.shift();
+        checkGameOver(piece);
         setPiecesWaiting(piecesDuplicate);
         setTetrisElem(getTetris());
       }
@@ -34,6 +38,7 @@ export const Game = (props) => {
 
     const interval = setInterval(() => {
       checkPiece();
+      setTetrisElem(getTetris());
       if (piece.x + getFormHight(piece.form) < 19 && canMoveDown())
         piece.x++;
       setTetrisElem(getTetris());
@@ -62,6 +67,11 @@ export const Game = (props) => {
     display: "inline-block"
   }
 
+  const checkGameOver = (send) => {
+    if (piece && containPieceForm(piece, piece.form))
+      gameOver();
+  }
+
   const isInPiece = (piece, i, j) => {
     for (let k = 0; k < piece.form.length; k++)
     {
@@ -88,6 +98,21 @@ export const Game = (props) => {
     if (piece && checkMainPiece && isInPiece(piece, i, j))
       containPiece = piece
     return containPiece;
+  }
+
+  const canRotate = () => {
+    let rotation = piece.rotation;
+    if (piece.rotation < 3)
+      rotation++
+    else
+      rotation = 0;
+    let form = piece.forms[rotation];
+    if (piece.y + getFormLength(form) < 10
+      && piece.x + getFormHight(form) < 19
+      && piece.y + getFormLength(form) - getFormWidth(form) + 2 > 0
+      && !containPieceForm(piece, form))
+      return true;
+    return false;
   }
 
   const canMoveDown = () => {
@@ -144,6 +169,7 @@ export const Game = (props) => {
       {
         piecesDuplicate = piecesWaiting;
         piece = piecesDuplicate.shift();
+        checkGameOver(piece);
         setPiecesWaiting(piecesDuplicate);
         setTetrisElem(getTetris());
       }
@@ -212,21 +238,6 @@ export const Game = (props) => {
     return contain;
   }
 
-  const canRotate = () => {
-    let rotation = piece.rotation;
-    if (piece.rotation < 3)
-      rotation++
-    else
-      rotation = 0;
-    let form = piece.forms[rotation];
-    if (piece.y + getFormLength(form) < 10
-      && piece.x + getFormHight(form) < 19
-      && piece.y + getFormLength(form) - getFormWidth(form) + 2 > 0
-      && !containPieceForm(piece, form))
-      return true;
-    return false;
-  }
-
   const handleKeyDown = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -239,6 +250,7 @@ export const Game = (props) => {
     {
       while (piece.x + getFormHight(piece.form) < 19 && canMoveDown())
         piece.x++;
+      checkPiece();
     }
     if (event.keyCode == KEY_UP_EVENT)
     {
@@ -294,8 +306,6 @@ export const Game = (props) => {
 
   return (
     <div className="jumbotron" onKeyDown={handleKeyDown}>
-      <h3>{game.users.length}</h3>
-      <h3>{piecesWaiting.length}</h3>
       <div className="tetris" style={tetrisStyle}>{tetrisElem}</div>
     </div>
   )

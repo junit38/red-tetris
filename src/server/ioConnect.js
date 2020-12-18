@@ -36,7 +36,13 @@ exports.connect = function(rooms, room, player_name) {
         app.socket.join(room);
         if (rooms[index].admin == null)
           rooms[index].admin = player_name;
-        rooms[index].users.push(player_name);
+        rooms[index].users.push({
+          name: player_name,
+          line: 0,
+          playing: false
+        });
+        ioController.getGames(rooms);
+        ioController.getGame(rooms, room);
       }
     }
     else {
@@ -45,7 +51,11 @@ exports.connect = function(rooms, room, player_name) {
         id: room,
         launched: false,
         admin: player_name,
-        users: [player_name],
+        users: [{
+          name: player_name,
+          line: 0,
+          playing: false
+        }],
         piecesWaiting: []
       });
       ioController.getGames(rooms);
@@ -65,7 +75,7 @@ exports.disconnect = function(rooms, room, player_name) {
     const index = tools.getRoomIndex(rooms, room);
     if (index != -1)
     {
-      const userIndex = rooms[index].users.indexOf(player_name);
+      const userIndex = tools.getUserIndex(rooms[index].users, player_name);
       rooms[index].users.splice(userIndex, 1);
       if (rooms[index].admin == player_name && rooms[index].users[0])
         rooms[index].admin = rooms[index].users[0];
