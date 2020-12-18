@@ -60,7 +60,7 @@ let jsonPieces = require('./json/pieces.json');
 exports.getNewPiece = function(room) {
   if (room) {
     let rand = Math.floor(Math.random() * jsonPieces.length);
-    const data = jsonPieces[rand];
+    const data = jsonPieces[0];
     app.io.in(room).emit(ioRoutes.NEW_PIECE_EVENT, data);
   }
 }

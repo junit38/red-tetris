@@ -34,7 +34,7 @@ export const Game = (props) => {
 
     const interval = setInterval(() => {
       checkPiece();
-      if (piece.x + getFormLength(piece) - 1 < 19 && canMoveDown())
+      if (piece.x + getFormHight(piece.form) < 19 && canMoveDown())
         piece.x++;
       setTetrisElem(getTetris());
     }, 1000);
@@ -133,7 +133,7 @@ export const Game = (props) => {
   }
 
   const checkPiece = () => {
-    if (piece.x + getFormLength(piece) - 1 == 19 || !canMoveDown())
+    if (piece.x + getFormHight(piece.form) == 19 || !canMoveDown())
     {
       let piecesDuplicate = pieces;
       piecesDuplicate.push(piece);
@@ -150,20 +150,81 @@ export const Game = (props) => {
     }
   }
 
-  const getFormLength = (piece) => {
+  const getFormHight = (form) => {
     let size = 0;
-    for (let i = 0; i < piece.form.length; i++)
+    for (let i = 0; i < form.length; i++)
     {
       let contain = false
-      for (let j = 0; j < piece.form[i].length; j++)
+      for (let j = 0; j < form[i].length; j++)
       {
-        if (piece.form[i][j] == 1)
+        if (form[i][j] == 1)
           contain = true;
       }
       if (contain)
-        size++;
+        size = i;
     }
     return (size)
+  }
+
+  const getFormLength = (form) => {
+    let size = 0;
+    for (let i = 0; i < form.length; i++)
+    {
+      let local_size = 0
+      for (let j = 0; j < form[i].length; j++)
+      {
+        if (form[i][j] == 1)
+          local_size = j;
+      }
+      if (local_size > size)
+        size = local_size;
+    }
+    return (size)
+  }
+
+  const getFormWidth = (form) => {
+    let size = 0;
+    for (let i = 0; i < form.length; i++)
+    {
+      let local_size = 0
+      for (let j = 0; j < form[i].length; j++)
+      {
+        if (form[i][j] == 1)
+          local_size++;
+      }
+      if (local_size > size)
+        size = local_size;
+    }
+    return (size)
+  }
+
+  const containPieceForm = (piece, form) => {
+    let contain = false;
+    for (let i = 0; i < form.length; i++)
+    {
+      for (let j = 0; j < form[i].length; j++)
+      {
+        let containPiece = getContainPiece(piece.x + i, piece.y + j, false);
+        if (form[i][j] == 1 && containPiece)
+          contain = true;
+      }
+    }
+    return contain;
+  }
+
+  const canRotate = () => {
+    let rotation = piece.rotation;
+    if (piece.rotation < 3)
+      rotation++
+    else
+      rotation = 0;
+    let form = piece.forms[rotation];
+    if (piece.y + getFormLength(form) < 10
+      && piece.x + getFormHight(form) < 19
+      && piece.y + getFormLength(form) - getFormWidth(form) + 2 > 0
+      && !containPieceForm(piece, form))
+      return true;
+    return false;
   }
 
   const handleKeyDown = (event) => {
@@ -176,19 +237,30 @@ export const Game = (props) => {
     const KEY_DOWN_EVENT = 40;
     if (event.keyCode == KEY_SPACE_EVENT)
     {
-      while (piece.x + getFormLength(piece) - 1 < 19 && canMoveDown())
+      while (piece.x + getFormHight(piece.form) < 19 && canMoveDown())
         piece.x++;
     }
+    if (event.keyCode == KEY_UP_EVENT)
+    {
+      if (canRotate())
+      {
+        if (piece.rotation < 3)
+          piece.rotation++
+        else
+          piece.rotation = 0;
+        piece.form = piece.forms[piece.rotation];
+      }
+    }
     else if (event.keyCode == KEY_LEFT_EVENT) {
-      if (piece.y > 0 && canMoveLeft())
+      if (piece.y + getFormLength(piece.form) - getFormWidth(piece.form) + 1 > 0 && canMoveLeft())
         piece.y--;
     }
     else if (event.keyCode == KEY_RIGHT_EVENT) {
-      if (piece.y + piece.form[0].length < 10 && canMoveRight())
+      if (piece.y + getFormLength(piece.form) < 9 && canMoveRight())
         piece.y++;
     }
     else if (event.keyCode == KEY_DOWN_EVENT) {
-      if (piece.x + getFormLength(piece) - 1 < 19 && canMoveDown())
+      if (piece.x + getFormHight(piece.form) < 19 && canMoveDown())
         piece.x++;
     }
     setTetrisElem(getTetris());
