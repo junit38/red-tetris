@@ -59,6 +59,7 @@ exports.connect = function(rooms, room, player_name) {
         piecesWaiting: []
       });
       ioController.getGames(rooms);
+      ioController.getGame(rooms, room);
     }
   }
   else
@@ -81,9 +82,9 @@ exports.disconnect = function(rooms, room, player_name) {
         rooms[index].admin = rooms[index].users[0];
       if (rooms[index].users.length == 0)
         rooms.splice(index, 1);
-      ioController.getGame(rooms, room);
-      ioController.getGames(rooms);
     }
+    ioController.getGame(rooms, room);
+    ioController.getGames(rooms);
   }
   else
     app.socket.leave(app.socket.id);

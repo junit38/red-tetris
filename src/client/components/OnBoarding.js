@@ -8,12 +8,11 @@ import GamesService from "../services/GamesService";
 export const OnBoarding = () => {
   const [login, setLogin] = useState(0);
   const [game, setGame] = useState(0);
-  const {gameId, getGameId, games, getGames} = GamesService()
+  const {gameId, getGameId, games} = GamesService()
   let history = useHistory();
   let gameElem = null;
 
   useEffect(() => {
-    getGames();
     if (gameId) {
       history.push(gameId + "[" + login + "]");
     }

@@ -26,11 +26,8 @@ exports.getUsersPlaying = function(rooms, room) {
   {
     const room = rooms[index];
     let usersPlaying = 0;
-    console.log('here');
-    console.log(room.users);
     for (let i = 0; i < room.users.length; i++)
     {
-      console.log(room.users);
       if (room.users[i].playing == true)
         usersPlaying++;
     }

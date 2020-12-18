@@ -21,6 +21,8 @@ const GamesService = () => {
       setGames(data);
     });
 
+    socketRef.current.emit(GET_GAMES_EVENT);
+
     return () => {
       socketRef.current.disconnect();
     };
@@ -30,11 +32,7 @@ const GamesService = () => {
     socketRef.current.emit(GET_GAME_ID_EVENT);
   };
 
-  const getGames = () => {
-    socketRef.current.emit(GET_GAMES_EVENT);
-  }
-
-  return { games, getGames, gameId, getGameId };
+  return { games, gameId, getGameId };
 };
 
 export default GamesService;

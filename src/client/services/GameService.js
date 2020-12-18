@@ -26,14 +26,12 @@ const GameService = (room, player_name) => {
       setError(data.message)
     });
 
+    socketRef.current.emit(GET_GAME_EVENT);
+
     return () => {
       socketRef.current.disconnect();
     };
   }, [room, player_name]);
-
-  const getGame = () => {
-    socketRef.current.emit(GET_GAME_EVENT);
-  }
 
   const launchGame = () => {
     socketRef.current.emit(LAUNCH_GAME_EVENT);
@@ -51,7 +49,7 @@ const GameService = (room, player_name) => {
     return socketRef;
   }
 
-  return { game, getGame, error, launchGame, getNewPiece, gameOver, getSocketRef };
+  return { game, error, launchGame, getNewPiece, gameOver, getSocketRef };
 };
 
 export default GameService;

@@ -40,7 +40,6 @@ exports.initRoute = function(socket, rooms, room, player_name) {
   socket.on(GAME_OVER_EVENT, () => {
     rooms = ioController.gameOver(rooms, room, player_name);
     ioController.getGame(rooms, room);
-    console.log(tools.getUsersPlaying(rooms, room));
     if (tools.getUsersPlaying(rooms, room) <= 1)
     {
       rooms = ioController.stopGame(rooms, room);
