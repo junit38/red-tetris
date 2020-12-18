@@ -12,6 +12,7 @@ export const Tetris = () => {
   const index = player_name_unformated.indexOf(']')
   const player_name = player_name_unformated.substring(0, index);
   const {game, error, launchGame, getNewPiece, gameOver, getSocketRef} = GameService(room, player_name)
+  const [alertSended, setAlertSended] = useState(false);
 
   const getUser = (game) => {
     for (let i = 0; i < game.users.length; i++)
@@ -37,10 +38,13 @@ export const Tetris = () => {
 
   const isGameOver = (game) => {
     const user = getUser(game, player_name);
-    console.log(user);
     if (user && user.playing == false)
     {
-      alert('Game Over');
+      if (!alertSended)
+      {
+        setAlertSended(true);
+        alert('Game Over');
+      }
       return true;
     }
     else if (user && user.playing == true && getUsersPlaying(game) <= 1

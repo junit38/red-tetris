@@ -20,8 +20,6 @@ export const Game = (props) => {
 
     getNewPiece();
 
-    // checkGameOver();
-
     socketRef.current.on(NEW_PIECE_EVENT, (data) => {
       let piecesDuplicate = piecesWaiting;
       piecesDuplicate.push({...data});
@@ -45,6 +43,7 @@ export const Game = (props) => {
     }, 1000);
 
     return () => {
+      socketRef.current.off(NEW_PIECE_EVENT);
       clearInterval(interval);
       document.removeEventListener("keydown", handleKeyDown, false);
     };
