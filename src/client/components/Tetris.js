@@ -48,8 +48,12 @@ export const Tetris = () => {
       return true;
     }
     else if (user && user.playing == true && getUsersPlaying(game) <= 1
-      && game && getUsersPlaying(game) <= 1)
+      && game && getUsersPlaying(game) != game.users.length)
+    {
+      console.log(getUsersPlaying(game));
+      console.log(game.users);
       alert('You Win');
+    }
     return false;
   }
 

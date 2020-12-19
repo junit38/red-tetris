@@ -13,7 +13,6 @@ export const Game = (props) => {
   const socketRef = getSocketRef();
   let tetris = [];
   let piece = null;
-  let piecesWaitingDuplicate;
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown, false);
@@ -21,15 +20,12 @@ export const Game = (props) => {
     getNewPiece();
 
     socketRef.current.on(NEW_PIECE_EVENT, (data) => {
-      let piecesDuplicate = piecesWaiting;
-      piecesDuplicate.push({...data});
-      setPiecesWaiting(piecesDuplicate);
+      setTetrisElem(getTetris());
+      piecesWaiting.push({...data});
       if (!piece)
       {
-        let piecesDuplicate = piecesWaiting;
-        piece = piecesDuplicate.shift();
+        piece = piecesWaiting.shift();
         checkGameOver(piece);
-        setPiecesWaiting(piecesDuplicate);
         setTetrisElem(getTetris());
       }
     });
@@ -37,7 +33,7 @@ export const Game = (props) => {
     const interval = setInterval(() => {
       checkPiece();
       setTetrisElem(getTetris());
-      if (piece.x + getFormHight(piece.form) < 19 && canMoveDown())
+      if (piece.x + getFormHight(piece.form) < 19 && canMoveDown(piece))
         piece.x++;
       setTetrisElem(getTetris());
     }, 1000);
@@ -114,21 +110,21 @@ export const Game = (props) => {
     return false;
   }
 
-  const canMoveDown = () => {
+  const canMoveDown = (piece) => {
     let can = true;
     for (let i = 0; i < piece.form.length; i++)
     {
       for (let j = 0; j < piece.form[i].length; j++)
       {
         let containPiece = getContainPiece(piece.x + i + 1, piece.y + j, false);
-        if (piece.form[i][j] == 1 && containPiece)
+        if (piece.form[i][j] == 1 && containPiece && containPiece != piece)
           can = false;
       }
     }
     return can;
   }
 
-  const canMoveLeft = () => {
+  const canMoveLeft = (piece) => {
     let can = true;
     for (let i = 0; i < piece.form.length; i++)
     {
@@ -142,7 +138,7 @@ export const Game = (props) => {
     return can;
   }
 
-  const canMoveRight = () => {
+  const canMoveRight = (piece) => {
     let can = true;
     for (let i = 0; i < piece.form.length; i++)
     {
@@ -156,22 +152,85 @@ export const Game = (props) => {
     return can;
   }
 
-  const checkPiece = () => {
-    if (piece.x + getFormHight(piece.form) == 19 || !canMoveDown())
+  const reducePiece = (piece) => {
+    for (let i = 0; i < piece.form.length; i++)
     {
-      let piecesDuplicate = pieces;
-      piecesDuplicate.push(piece);
-      setPieces(piecesDuplicate);
+      for (let j = 0; j < piece.form[i].length; j++)
+      {
+        if (piece.form[i][j] == -1 && piece.form[i - 1]
+          && piece.form[i - 1][j] == 1 && piece.form[i + 1]
+          && piece.form[i + 1][j] == 1)
+        {
+          console.log(piece);
+          // for (let k = i; k > 0; k--)
+          // {
+          //   for (let l = 0; l < piece.form[i].length; l++)
+          //   {
+          //     if (!getContainPiece(piece.x + k - 1, piece.y + j))
+          //       piece.form[k][j] = piece.form[k - 1][j];
+          //   }
+          // }
+        }
+      }
+    }
+    piece.toReduce = 0;
+  }
+
+  const hideLine = (line) => {
+    pieces.forEach(function(piece) {
+      for (let i = 0; i < piece.form.length; i++)
+      {
+        for (let j = 0; j < piece.form[i].length; j++)
+        {
+          if (piece.form[i][j] == 1 && piece.x + i == line)
+          {
+            piece.form[i][j] = -1;
+            piece.toReduce = 1;
+          }
+        }
+      }
+    })
+    setTimeout(function() {
+      pieces.forEach(function(piece) {
+        if (piece.x + getFormHight(piece.form) < 19 && canMoveDown(piece))
+          piece.x++;
+      })
+    }, 500);
+    setTimeout(function() {
+      pieces.forEach(function(piece) {
+        if (piece.toReduce)
+          reducePiece(piece);
+      })
+    }, 500);
+  }
+
+  const checkLines = () => {
+    for (let i = 20; i >= 0; i--)
+    {
+      let line = true;
+      for (let j = 0; j < 10; j++)
+      {
+        if (!getContainPiece(i, j, false))
+          line = false;
+      }
+      if (line == true)
+        hideLine(i);
+    }
+  }
+
+  const checkPiece = () => {
+    if (piece.x + getFormHight(piece.form) == 19 || !canMoveDown(piece))
+    {
+      pieces.push(piece);
       if (!piecesWaiting.length)
         getNewPiece()
       else
       {
-        piecesDuplicate = piecesWaiting;
-        piece = piecesDuplicate.shift();
+        piece = piecesWaiting.shift();
         checkGameOver(piece);
-        setPiecesWaiting(piecesDuplicate);
         setTetrisElem(getTetris());
       }
+      checkLines();
     }
   }
 
@@ -209,17 +268,22 @@ export const Game = (props) => {
 
   const getFormWidth = (form) => {
     let size = 0;
+    let start = 4;
+    let end = -1;
     for (let i = 0; i < form.length; i++)
     {
-      let local_size = 0
       for (let j = 0; j < form[i].length; j++)
       {
         if (form[i][j] == 1)
-          local_size++;
+        {
+          if ((j < start) == true)
+            start = j;
+          if ((j > end) == true)
+            end = j;
+        }
       }
-      if (local_size > size)
-        size = local_size;
     }
+    size = (end + 1) - start;
     return (size)
   }
 
@@ -247,7 +311,7 @@ export const Game = (props) => {
     const KEY_DOWN_EVENT = 40;
     if (event.keyCode == KEY_SPACE_EVENT)
     {
-      while (piece.x + getFormHight(piece.form) < 19 && canMoveDown())
+      while (piece.x + getFormHight(piece.form) < 19 && canMoveDown(piece))
         piece.x++;
       checkPiece();
     }
@@ -263,15 +327,15 @@ export const Game = (props) => {
       }
     }
     else if (event.keyCode == KEY_LEFT_EVENT) {
-      if (piece.y + getFormLength(piece.form) - getFormWidth(piece.form) + 1 > 0 && canMoveLeft())
+      if (piece.y + getFormLength(piece.form) - getFormWidth(piece.form) + 1 > 0 && canMoveLeft(piece))
         piece.y--;
     }
     else if (event.keyCode == KEY_RIGHT_EVENT) {
-      if (piece.y + getFormLength(piece.form) < 9 && canMoveRight())
+      if (piece.y + getFormLength(piece.form) < 9 && canMoveRight(piece))
         piece.y++;
     }
     else if (event.keyCode == KEY_DOWN_EVENT) {
-      if (piece.x + getFormHight(piece.form) < 19 && canMoveDown())
+      if (piece.x + getFormHight(piece.form) < 19 && canMoveDown(piece))
         piece.x++;
     }
     setTetrisElem(getTetris());
