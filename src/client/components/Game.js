@@ -33,7 +33,7 @@ export const Game = (props) => {
     const interval = setInterval(() => {
       checkPiece();
       setTetrisElem(getTetris());
-      if (piece.x + getFormHight(piece.form) < 19 && canMoveDown(piece))
+      if (piece && piece.x + getFormHight(piece.form) < 19 && canMoveDown(piece))
         piece.x++;
       setTetrisElem(getTetris());
     }, 1000);
@@ -152,24 +152,47 @@ export const Game = (props) => {
     return can;
   }
 
-  const reducePiece = (piece) => {
+  const canBeReduced = (piece) => {
+    let can = true;
+    let stop = false
+    for (let i = 0; i < piece.form.length && stop == false; i++)
+    {
+      for (let j = 0; j < piece.form[i].length && stop == false; j++)
+      {
+        if (piece.form[i][j] == -1)
+          stop = true;
+        else
+        {
+          let containPiece = getContainPiece(piece.x + i + 1, piece.y + j, false);
+          if (piece.form[i][j] == 1 && containPiece && containPiece != piece)
+            can = false;
+        }
+      }
+    }
+    return can;
+  }
+
+  const reducePiece = (piece, i) => {
+    for (let k = i; k > 0; k--)
+    {
+      for (let l = 0; l < piece.form[k].length; l++)
+      {
+        piece.form[k][l] = piece.form[k - 1][l];
+        piece.form[k - 1][l] = 0;
+      }
+    }
+  }
+
+  const toReducePiece = (piece) => {
     for (let i = 0; i < piece.form.length; i++)
     {
       for (let j = 0; j < piece.form[i].length; j++)
       {
         if (piece.form[i][j] == -1 && piece.form[i - 1]
-          && piece.form[i - 1][j] == 1 && piece.form[i + 1]
-          && piece.form[i + 1][j] == 1)
+          && piece.form[i - 1][j] == 1)
         {
-          console.log(piece);
-          // for (let k = i; k > 0; k--)
-          // {
-          //   for (let l = 0; l < piece.form[i].length; l++)
-          //   {
-          //     if (!getContainPiece(piece.x + k - 1, piece.y + j))
-          //       piece.form[k][j] = piece.form[k - 1][j];
-          //   }
-          // }
+          if (canBeReduced(piece))
+            reducePiece(piece, i);
         }
       }
     }
@@ -192,14 +215,10 @@ export const Game = (props) => {
     })
     setTimeout(function() {
       pieces.forEach(function(piece) {
-        if (piece.x + getFormHight(piece.form) < 19 && canMoveDown(piece))
-          piece.x++;
-      })
-    }, 500);
-    setTimeout(function() {
-      pieces.forEach(function(piece) {
         if (piece.toReduce)
-          reducePiece(piece);
+          toReducePiece(piece);
+        else if (piece.x + getFormHight(piece.form) < 19 && canMoveDown(piece))
+          piece.x++;
       })
     }, 500);
   }
@@ -222,6 +241,7 @@ export const Game = (props) => {
     if (piece.x + getFormHight(piece.form) == 19 || !canMoveDown(piece))
     {
       pieces.push(piece);
+      piece = null;
       if (!piecesWaiting.length)
         getNewPiece()
       else
@@ -309,6 +329,8 @@ export const Game = (props) => {
     const KEY_UP_EVENT = 38;
     const KEY_RIGHT_EVENT = 39;
     const KEY_DOWN_EVENT = 40;
+    if (!piece)
+      return ;
     if (event.keyCode == KEY_SPACE_EVENT)
     {
       while (piece.x + getFormHight(piece.form) < 19 && canMoveDown(piece))
