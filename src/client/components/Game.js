@@ -1,11 +1,14 @@
 import React, {useEffect,useState} from 'react'
 
 const NEW_PIECE_EVENT = "newPiece";
+const GET_USERS_EVENT = "getUsers";
 
 export const Game = (props) => {
   const game = props.game;
+  const player_name = props.player_name;
   const gameOver = props.gameOver;
   const getNewPiece = props.getNewPiece;
+  const sendLines = props.sendLines;
   const getSocketRef = props.getSocketRef;
   const [pieces, setPieces] = useState([]);
   const [piecesWaiting, setPiecesWaiting] = useState([]);
@@ -13,6 +16,9 @@ export const Game = (props) => {
   const socketRef = getSocketRef();
   let tetris = [];
   let piece = null;
+  let user = {
+    lines: 0
+  }
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown, false);
@@ -25,9 +31,23 @@ export const Game = (props) => {
       if (!piece)
       {
         piece = piecesWaiting.shift();
+        piece.x = user.lines;
         checkGameOver(piece);
         setTetrisElem(getTetris());
       }
+    });
+
+    const getUser = (users) => {
+      for (let i = 0; i < users.length; i++)
+      {
+        if (users[i].name == player_name)
+          return users[i];
+      }
+      return (null);
+    }
+
+    socketRef.current.on(GET_USERS_EVENT, (data) => {
+      user = getUser(data);
     });
 
     const interval = setInterval(() => {
@@ -46,20 +66,26 @@ export const Game = (props) => {
   }, []);
 
   const tetrisStyle = {
-    marginLeft: "auto",
-    marginRight: "auto",
-    width: "auto"
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    width: 'auto'
   }
 
   const lineStyle = {
-    height: "20px"
+    height: '20px'
+  }
+
+  const lineBlockStyle = {
+    height: '20px',
+    backgroundColor: 'gray',
+    width: '200px'
   }
 
   const brickStyle = {
-    width: "20px",
-    height: "20px",
-    border: "0.5px solid gray",
-    display: "inline-block"
+    width: '20px',
+    height: '20px',
+    border: '0.5px solid gray',
+    display: 'inline-block'
   }
 
   const checkGameOver = (send) => {
@@ -223,6 +249,22 @@ export const Game = (props) => {
     }, 500);
   }
 
+  const getHiddenLines = () => {
+    let lines = 0;
+    for (let i = 20; i >= 0; i--)
+    {
+      let line = true;
+      for (let j = 0; j < 10; j++)
+      {
+        if (!getContainPiece(i, j, false))
+          line = false;
+      }
+      if (line == true)
+        lines++
+    }
+    return lines;
+  }
+
   const checkLines = () => {
     for (let i = 20; i >= 0; i--)
     {
@@ -235,6 +277,12 @@ export const Game = (props) => {
       if (line == true)
         hideLine(i);
     }
+  }
+
+  const sendHiddenLines = () => {
+    let lines = getHiddenLines();
+    if (lines > 1)
+      sendLines(lines - 1);
   }
 
   const checkPiece = () => {
@@ -250,6 +298,7 @@ export const Game = (props) => {
         checkGameOver(piece);
         setTetrisElem(getTetris());
       }
+      sendHiddenLines();
       checkLines();
     }
   }
@@ -365,7 +414,7 @@ export const Game = (props) => {
 
   const getTetris = () => {
     tetris = [];
-    for (let i = 0; i < 20; i++)
+    for (let i = user.lines; i < 20; i++)
     {
       let tetrisLine = [];
       for (let j = 0; j < 10; j++)
@@ -383,6 +432,8 @@ export const Game = (props) => {
         {tetrisLine}
         </div>)
     }
+    for (let i = 0; i < user.lines; i++)
+      tetris.push(<div className="lineBlock" style={lineBlockStyle} key={i}></div>)
     return tetris;
   }
 
@@ -391,6 +442,7 @@ export const Game = (props) => {
 
   return (
     <div className="jumbotron" onKeyDown={handleKeyDown}>
+      <h3>{user.lines}</h3>
       <div className="tetris" style={tetrisStyle}>{tetrisElem}</div>
     </div>
   )

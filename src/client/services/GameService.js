@@ -7,6 +7,7 @@ const GET_GAME_EVENT = "getGame";
 const GAME_ERROR_EVENT = "gameError";
 const NEW_PIECE_EVENT = "newPiece";
 const GAME_OVER_EVENT = "gameOver";
+const SEND_LINES_EVENT = "sendLines";
 
 const GameService = (room, player_name) => {
   const [game, setGame] = useState(null);
@@ -45,11 +46,15 @@ const GameService = (room, player_name) => {
     socketRef.current.emit(GAME_OVER_EVENT);
   }
 
+  const sendLines = (lines) => {
+    socketRef.current.emit(SEND_LINES_EVENT, lines);
+  }
+
   const getSocketRef = () => {
     return socketRef;
   }
 
-  return { game, error, launchGame, getNewPiece, gameOver, getSocketRef };
+  return { game, error, launchGame, getNewPiece, gameOver, sendLines, getSocketRef };
 };
 
 export default GameService;

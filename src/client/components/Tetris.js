@@ -11,7 +11,7 @@ export const Tetris = () => {
   const player_name_unformated = location.pathname.substring(1).split('[')[1]
   const index = player_name_unformated.indexOf(']')
   const player_name = player_name_unformated.substring(0, index);
-  const {game, error, launchGame, getNewPiece, gameOver, getSocketRef} = GameService(room, player_name)
+  const {game, error, launchGame, getNewPiece, gameOver, sendLines, getSocketRef} = GameService(room, player_name)
   const [alertSended, setAlertSended] = useState(false);
 
   const getUser = (game) => {
@@ -49,11 +49,7 @@ export const Tetris = () => {
     }
     else if (user && user.playing == true && getUsersPlaying(game) <= 1
       && game && getUsersPlaying(game) != game.users.length)
-    {
-      console.log(getUsersPlaying(game));
-      console.log(game.users);
       alert('You Win');
-    }
     return false;
   }
 
@@ -92,8 +88,10 @@ export const Tetris = () => {
   else if (game && game.launched)
     return (
       <Game game={game}
+            player_name={player_name}
             getNewPiece={getNewPiece}
             gameOver={gameOver}
+            sendLines={sendLines}
             getSocketRef={getSocketRef}/>
     )
   else

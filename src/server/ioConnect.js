@@ -38,7 +38,7 @@ exports.connect = function(rooms, room, player_name) {
           rooms[index].admin = player_name;
         rooms[index].users.push({
           name: player_name,
-          line: 0,
+          lines: 0,
           playing: false
         });
         ioController.getGames(rooms);
@@ -53,7 +53,7 @@ exports.connect = function(rooms, room, player_name) {
         admin: player_name,
         users: [{
           name: player_name,
-          line: 0,
+          lines: 0,
           playing: false
         }],
         piecesWaiting: []
