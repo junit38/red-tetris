@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { Board } from './Board';
 import { Game } from './Game';
+import { Spectrum } from './Spectrum';
 import GameService from "../services/GameService";
 
 export const Tetris = () => {
@@ -11,7 +12,7 @@ export const Tetris = () => {
   const player_name_unformated = location.pathname.substring(1).split('[')[1]
   const index = player_name_unformated.indexOf(']')
   const player_name = player_name_unformated.substring(0, index);
-  const {game, error, launchGame, getNewPiece, gameOver, sendLines, getSocketRef} = GameService(room, player_name)
+  const {game, error, launchGame, getNewPiece, gameOver, sendBlocks, sendLines, getSocketRef} = GameService(room, player_name)
   const [alertSended, setAlertSended] = useState(false);
 
   const getUser = (game) => {
@@ -36,6 +37,19 @@ export const Tetris = () => {
     return (usersPlaying);
   }
 
+  const getUsersNotWaiting = (game) => {
+    let usersNotWaiting = 0;
+    if (game && game.users)
+    {
+      for (let i = 0; i < game.users.length; i++)
+      {
+        if (!game.users[i].waiting)
+          usersNotWaiting++;
+      }
+    }
+    return (usersNotWaiting);
+  }
+
   const isGameOver = (game) => {
     const user = getUser(game, player_name);
     if (user && user.playing == false)
@@ -47,8 +61,9 @@ export const Tetris = () => {
       }
       return true;
     }
-    else if (user && user.playing == true && getUsersPlaying(game) <= 1
-      && game && getUsersPlaying(game) != game.users.length)
+    else if (user && user.playing == true
+      && getUsersPlaying(game) <= 1
+      && game && getUsersPlaying(game) != getUsersNotWaiting(game))
       alert('You Win');
     return false;
   }
@@ -58,7 +73,19 @@ export const Tetris = () => {
       setGameOver(true);
   }
 
-  if (error)
+  if (game && game.launched && error)
+  {
+    return (
+      <div className="jumbotron">
+        <h3>{error}</h3>
+        <p>Waiting for the end of the game</p>
+        <Link to={`/`}>
+          Return
+        </Link>
+      </div>
+      )
+  }
+  else if (error && !game)
     return (
       <div className="jumbotron">
         <h3>{error}</h3>
@@ -87,12 +114,18 @@ export const Tetris = () => {
       )
   else if (game && game.launched)
     return (
-      <Game game={game}
-            player_name={player_name}
-            getNewPiece={getNewPiece}
-            gameOver={gameOver}
-            sendLines={sendLines}
-            getSocketRef={getSocketRef}/>
+      <div className="jumbotron">
+        <Game game={game}
+              player_name={player_name}
+              getNewPiece={getNewPiece}
+              gameOver={gameOver}
+              sendBlocks={sendBlocks}
+              sendLines={sendLines}
+              getSocketRef={getSocketRef}/>
+        <Spectrum game={game}
+                  player_name={player_name}
+                  getSocketRef={getSocketRef}/>
+      </div>
     )
   else
     return (

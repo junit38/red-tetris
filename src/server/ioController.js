@@ -56,6 +56,7 @@ exports.launchGame = function(rooms, room) {
     rooms[index].launched = true;
     rooms[index].users.forEach(function(user){
       user.playing = true;
+      user.waiting = false;
     });
   }
   return (rooms);
@@ -95,7 +96,7 @@ exports.gameOver = function(rooms, room, player_name) {
   }
 }
 
-exports.sendLines = function(rooms, room, player_name, lines) {
+exports.sendBlocks = function(rooms, room, player_name, blocks) {
   if (room && rooms)
   {
     const index = tools.getRoomIndex(rooms, room);
@@ -105,7 +106,25 @@ exports.sendLines = function(rooms, room, player_name, lines) {
       {
         rooms[index].users.forEach(function(user) {
           if (user.name != player_name)
-            user.lines += lines;
+            user.blocks += blocks;
+        });
+        return rooms;
+      }
+    }
+  }
+}
+
+exports.sendLines = function(rooms, room, player_name, lines) {
+  if (room && rooms)
+  {
+    const index = tools.getRoomIndex(rooms, room);
+    if (index != -1)
+    {
+      if (rooms[index].users)
+      {
+        rooms[index].users.forEach(function(user) {
+          if (user.name == player_name)
+            user.lines = lines;
         });
         return rooms;
       }

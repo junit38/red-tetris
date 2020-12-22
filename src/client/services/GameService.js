@@ -7,6 +7,7 @@ const GET_GAME_EVENT = "getGame";
 const GAME_ERROR_EVENT = "gameError";
 const NEW_PIECE_EVENT = "newPiece";
 const GAME_OVER_EVENT = "gameOver";
+const SEND_BLOCKS_EVENT = "sendBlocks";
 const SEND_LINES_EVENT = "sendLines";
 
 const GameService = (room, player_name) => {
@@ -46,6 +47,10 @@ const GameService = (room, player_name) => {
     socketRef.current.emit(GAME_OVER_EVENT);
   }
 
+  const sendBlocks = (blocks) => {
+    socketRef.current.emit(SEND_BLOCKS_EVENT, blocks);
+  }
+
   const sendLines = (lines) => {
     socketRef.current.emit(SEND_LINES_EVENT, lines);
   }
@@ -54,7 +59,7 @@ const GameService = (room, player_name) => {
     return socketRef;
   }
 
-  return { game, error, launchGame, getNewPiece, gameOver, sendLines, getSocketRef };
+  return { game, error, launchGame, getNewPiece, gameOver, sendBlocks, sendLines, getSocketRef };
 };
 
 export default GameService;

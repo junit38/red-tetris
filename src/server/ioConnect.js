@@ -29,8 +29,18 @@ exports.connect = function(rooms, room, player_name) {
       else if (rooms[index].launched)
       {
         app.socket.emit(ioRoutes.GAME_ERROR_EVENT, {message: 'Game already launched'});
-        room = null;
-        player_name = null;
+        app.socket.join(room);
+        if (rooms[index].admin == null)
+          rooms[index].admin = player_name;
+        rooms[index].users.push({
+          name: player_name,
+          lines: 20,
+          blocks: 0,
+          playing: false,
+          waiting: true
+        });
+        ioController.getGames(rooms);
+        ioController.getGame(rooms, room);
       }
       else {
         app.socket.join(room);
@@ -38,8 +48,10 @@ exports.connect = function(rooms, room, player_name) {
           rooms[index].admin = player_name;
         rooms[index].users.push({
           name: player_name,
-          lines: 0,
-          playing: false
+          lines: 20,
+          blocks: 0,
+          playing: false,
+          waiting: false
         });
         ioController.getGames(rooms);
         ioController.getGame(rooms, room);
@@ -53,8 +65,10 @@ exports.connect = function(rooms, room, player_name) {
         admin: player_name,
         users: [{
           name: player_name,
-          lines: 0,
-          playing: false
+          lines: 20,
+          blocks: 0,
+          playing: false,
+          waiting: false
         }],
         piecesWaiting: []
       });
