@@ -8,7 +8,7 @@ export const Spectrum = (props) => {
 
   const spectrumStyle = {
     display: 'inline-flex',
-    padding: '50px'
+    paddingLeft: '50px'
   }
 
   let userContainerStyle = {

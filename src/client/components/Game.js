@@ -48,7 +48,11 @@ export const Game = (props) => {
     }
 
     socketRef.current.on(GET_USERS_EVENT, (data) => {
+      const blocks = user.blocks;
       user = getUser(data);
+      const newBlocks = user.blocks;
+      for (let i = 0; i < newBlocks - blocks; i++)
+        piece.x++;
     });
 
     const interval = setInterval(() => {
@@ -94,6 +98,7 @@ export const Game = (props) => {
   }
 
   const checkGameOver = (send) => {
+    console.log(game);
     if (piece && containPieceForm(piece, piece.form))
       gameOver();
   }

@@ -15,12 +15,22 @@ exports.connect = function(rooms, room, player_name) {
   //   }
   // })
 
+  const findUser = function(room, player_name) {
+    let findUser = -1;
+    for (let i = 0; i < room.users.length; i++)
+    {
+      if (room.users[i].name == player_name)
+        findUser = i;
+    }
+    return findUser;
+  }
+
   if (room && player_name)
   {
     const index = tools.getRoomIndex(rooms, room);
     if (index != -1)
     {
-      if (rooms[index].users.indexOf(player_name) != -1)
+      if (findUser(rooms[index], player_name) != -1)
       {
         app.socket.emit(ioRoutes.GAME_ERROR_EVENT, {message: 'Name already used.'});
         room = null;
@@ -78,7 +88,11 @@ exports.connect = function(rooms, room, player_name) {
   }
   else
     app.socket.join(app.socket.id)
-  return (rooms);
+  return ({
+    'rooms': rooms,
+    'room': room,
+    'player_name': player_name
+  });
 }
 
 exports.disconnect = function(rooms, room, player_name) {
@@ -86,16 +100,20 @@ exports.disconnect = function(rooms, room, player_name) {
 
   if (room && player_name)
   {
-    app.socket.leave(room);
     const index = tools.getRoomIndex(rooms, room);
     if (index != -1)
     {
       const userIndex = tools.getUserIndex(rooms[index].users, player_name);
       rooms[index].users.splice(userIndex, 1);
-      if (rooms[index].admin == player_name && rooms[index].users[0])
-        rooms[index].admin = rooms[index].users[0];
+      if (rooms[index].admin == player_name)
+        rooms[index].admin = null;
+      if (rooms[index].admin == null && rooms[index].users[0])
+        rooms[index].admin = rooms[index].users[0].name;
       if (rooms[index].users.length == 0)
+      {
+        app.socket.leave(room);
         rooms.splice(index, 1);
+      }
     }
     ioController.getGame(rooms, room);
     ioController.getGames(rooms);

@@ -58,6 +58,7 @@ exports.launchGame = function(rooms, room) {
       user.playing = true;
       user.waiting = false;
     });
+    app.io.in(room).emit(ioRoutes.LAUNCH_GAME_EVENT);
   }
   return (rooms);
 }
@@ -89,11 +90,11 @@ exports.gameOver = function(rooms, room, player_name) {
         if (userIndex != -1)
         {
           rooms[index].users[userIndex].playing = false;
-          return rooms;
         }
       }
     }
   }
+  return rooms;
 }
 
 exports.sendBlocks = function(rooms, room, player_name, blocks) {
@@ -108,10 +109,10 @@ exports.sendBlocks = function(rooms, room, player_name, blocks) {
           if (user.name != player_name)
             user.blocks += blocks;
         });
-        return rooms;
       }
     }
   }
+  return rooms;
 }
 
 exports.sendLines = function(rooms, room, player_name, lines) {
@@ -126,10 +127,10 @@ exports.sendLines = function(rooms, room, player_name, lines) {
           if (user.name == player_name)
             user.lines = lines;
         });
-        return rooms;
       }
     }
   }
+  return rooms;
 }
 
 exports.getUsers = function(rooms, room) {
@@ -139,4 +140,21 @@ exports.getUsers = function(rooms, room) {
     if (index != -1)
       app.io.in(room).emit(ioRoutes.GET_USERS_EVENT, rooms[index].users);
   }
+}
+
+exports.resetGame = function(rooms, room) {
+  if (room && rooms)
+  {
+    const index = tools.getRoomIndex(rooms, room);
+    if (index != -1)
+    {
+      rooms[index].users.forEach(function(user){
+        user.lines = 20;
+        user.blocks = 0;
+        user.playing = false;
+        user.waiting = false;
+      });
+    }
+  }
+  return rooms;
 }

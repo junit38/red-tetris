@@ -15,6 +15,7 @@ const GAME_OVER_EVENT = "gameOver";
 const SEND_BLOCKS_EVENT = "sendBlocks";
 const GET_USERS_EVENT = "getUsers";
 const SEND_LINES_EVENT = "sendLines";
+const RESET_GAME_EVENT = "resetGame";
 
 exports.initRoute = function(socket, rooms, room, player_name) {
   socket.on(GET_GAME_ID_EVENT, () => {
@@ -61,6 +62,11 @@ exports.initRoute = function(socket, rooms, room, player_name) {
     ioController.sendLines(rooms, room, player_name, lines);
     ioController.getGame(rooms, room);
   });
+
+  socket.on(RESET_GAME_EVENT, () => {
+    rooms = ioController.resetGame(rooms, room);
+    ioController.getGame(rooms, room);
+  });
 }
 
 exports.GET_GAME_ID_EVENT = GET_GAME_ID_EVENT;
@@ -73,3 +79,4 @@ exports.GAME_OVER_EVENT = GAME_OVER_EVENT;
 exports.SEND_BLOCKS_EVENT = SEND_BLOCKS_EVENT;
 exports.GET_USERS_EVENT = GET_USERS_EVENT;
 exports.SEND_LINES_EVENT = SEND_LINES_EVENT;
+exports.RESET_GAME_EVENT = RESET_GAME_EVENT;

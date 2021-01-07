@@ -6,14 +6,23 @@ import { Game } from './Game';
 import { Spectrum } from './Spectrum';
 import GameService from "../services/GameService";
 
+const LAUNCH_GAME_EVENT = "launchGame";
+
 export const Tetris = () => {
   const location = useLocation();
   const room = location.pathname.substring(1).split('[')[0]
   const player_name_unformated = location.pathname.substring(1).split('[')[1]
   const index = player_name_unformated.indexOf(']')
   const player_name = player_name_unformated.substring(0, index);
-  const {game, error, launchGame, getNewPiece, gameOver, sendBlocks, sendLines, getSocketRef} = GameService(room, player_name)
+  const {game, error, launchGame, getNewPiece, gameOver, sendBlocks, sendLines, resetGame, getSocketRef} = GameService(room, player_name)
   const [alertSended, setAlertSended] = useState(false);
+  const socketRef = getSocketRef();
+
+  useEffect(() => {
+    socketRef.current.on(LAUNCH_GAME_EVENT, () => {
+      setAlertSended(false);
+    });
+  }, []);
 
   const getUser = (game) => {
     for (let i = 0; i < game.users.length; i++)
@@ -68,9 +77,10 @@ export const Tetris = () => {
     return false;
   }
 
-  const setGameOver = () => {
-    if (isGameOver(game))
-      setGameOver(true);
+  const launchGameBoard = () => {
+    resetGame();
+    setAlertSended(false);
+    launchGame();
   }
 
   if (game && game.launched && error)
@@ -96,7 +106,7 @@ export const Tetris = () => {
       )
   else if (game && !game.launched)
     return (
-      <Board launchGame={launchGame}
+      <Board launchGameBoard={launchGameBoard}
              game={game}
              room={room}
              player_name={player_name}

@@ -40,8 +40,12 @@ const initEngine = io => {
     exports.socket = socket;
 
     let { room, player_name } = socket.handshake.query;
+    let connectData = {};
 
-    rooms = ioConnect.connect(rooms, room, player_name);
+    connectData = ioConnect.connect(rooms, room, player_name);
+    rooms = connectData.rooms;
+    room = connectData.room;
+    player_name = connectData.player_name;
 
     socket.on("disconnect", () => {
       rooms = ioConnect.disconnect(rooms, room, player_name)
