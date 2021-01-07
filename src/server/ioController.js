@@ -3,158 +3,120 @@ import debug from 'debug'
 const tools = require('./tools')
   , app = require('./index.js')
   , ioRoutes = require('./ioRoutes')
-  , jsonPieces = require('./json/pieces.json')
+  , Game = require('./classes/Game')
+  , Piece = require('./classes/Piece')
 
-exports.getGameId = function (rooms) {
+exports.getGameId = function (games) {
   let id = 0;
   let room = 'room_' + id;
 
-  function findGame(room) {
-    for (let i = 0; i < rooms.length; i++) {
-      if (rooms[i].id == room)
-        return (1);
-    }
-    return (-1);
-  }
-
-  while (findGame(room) != -1)
+  while (tools.findGame(games, room) != null)
   {
     id = id + 1
     room = 'room_' + id;
   }
-  rooms.push({
-    id: room,
-    launched: false,
-    admin: null,
-    users: []
-  });
+
+  const newGame = new Game(room);
+  games.push(newGame);
   app.io.in(app.socket.id).emit(ioRoutes.GET_GAME_ID_EVENT, {
     room: room
   });
-  return (rooms);
+  return (games);
 }
 
-exports.getGame = function(rooms, room) {
-  if (room) {
-    const index = tools.getRoomIndex(rooms, room);
-    if (index != -1)
-    {
-      const data = rooms[index];
-      app.io.in(room).emit(ioRoutes.GET_GAME_EVENT, data);
-    }
+exports.getGame = function(games, room) {
+  if (games && room)
+  {
+    const game = tools.findGame(games, room)
+    if (game)
+      app.io.in(room).emit(ioRoutes.GET_GAME_EVENT, game);
   }
 }
 
-exports.getGames = function(rooms) {
-  app.io.emit(ioRoutes.GET_GAMES_EVENT, rooms);
+exports.getGames = function(games) {
+  app.io.emit(ioRoutes.GET_GAMES_EVENT, games);
 }
 
-exports.launchGame = function(rooms, room) {
-  const index = tools.getRoomIndex(rooms, room);
-  if (index != -1)
+exports.launchGame = function(games, room) {
+  const game = tools.findGame(games, room)
+  if (game)
   {
-    rooms[index].launched = true;
-    rooms[index].users.forEach(function(user){
-      user.playing = true;
-      user.waiting = false;
-    });
+    game.launch();
+    game.startPlaying();
     app.io.in(room).emit(ioRoutes.LAUNCH_GAME_EVENT);
   }
-  return (rooms);
+  return (games);
 }
 
-exports.stopGame = function(rooms, room) {
-  const index = tools.getRoomIndex(rooms, room);
-  if (index != -1)
-    rooms[index].launched = false;
-  return (rooms);
+exports.stopGame = function(games, room) {
+  const game = tools.findGame(games, room)
+  if (game)
+    game.stop();
+  return (games);
 }
 
 exports.getNewPiece = function(room) {
-  if (room) {
-    let rand = Math.floor(Math.random() * jsonPieces.length);
-    const data = jsonPieces[rand];
-    app.io.in(room).emit(ioRoutes.NEW_PIECE_EVENT, data);
+  if (room)
+  {
+    const newPiece = new Piece();
+    app.io.in(room).emit(ioRoutes.NEW_PIECE_EVENT, newPiece);
   }
 }
 
-exports.gameOver = function(rooms, room, player_name) {
-  if (room && rooms)
+exports.gameOver = function(games, room, player_name) {
+  if (room && games)
   {
-    const index = tools.getRoomIndex(rooms, room);
-    if (index != -1)
+    const game = tools.findGame(games, room)
+    if (game)
     {
-      if (rooms[index].users)
-      {
-        const userIndex = tools.getUserIndex(rooms[index].users, player_name)
-        if (userIndex != -1)
-        {
-          rooms[index].users[userIndex].playing = false;
-        }
-      }
+      if (game.users)
+        game.stopUserPlaying(player_name);
     }
   }
-  return rooms;
+  return games;
 }
 
-exports.sendBlocks = function(rooms, room, player_name, blocks) {
-  if (room && rooms)
+exports.sendBlocks = function(games, room, player_name, blocks) {
+  if (room && games)
   {
-    const index = tools.getRoomIndex(rooms, room);
-    if (index != -1)
+    const game = tools.findGame(games, room)
+    if (game)
     {
-      if (rooms[index].users)
-      {
-        rooms[index].users.forEach(function(user) {
-          if (user.name != player_name)
-            user.blocks += blocks;
-        });
-      }
+      if (game.users)
+        game.addUserBlocks(player_name, blocks);
     }
   }
-  return rooms;
+  return games;
 }
 
-exports.sendLines = function(rooms, room, player_name, lines) {
-  if (room && rooms)
+exports.sendLines = function(games, room, player_name, lines) {
+  if (room && games)
   {
-    const index = tools.getRoomIndex(rooms, room);
-    if (index != -1)
+    const game = tools.findGame(games, room)
+    if (game)
     {
-      if (rooms[index].users)
-      {
-        rooms[index].users.forEach(function(user) {
-          if (user.name == player_name)
-            user.lines = lines;
-        });
-      }
+      if (game.users)
+        game.setUserLines(player_name, lines)
     }
   }
-  return rooms;
+  return games;
 }
 
-exports.getUsers = function(rooms, room) {
-  if (room && rooms)
+exports.getUsers = function(games, room) {
+  if (room && games)
   {
-    const index = tools.getRoomIndex(rooms, room);
-    if (index != -1)
-      app.io.in(room).emit(ioRoutes.GET_USERS_EVENT, rooms[index].users);
+    const game = tools.findGame(games, room)
+    if (game)
+      app.io.in(room).emit(ioRoutes.GET_USERS_EVENT, game.users);
   }
 }
 
-exports.resetGame = function(rooms, room) {
-  if (room && rooms)
+exports.resetGame = function(games, room) {
+  if (room && games)
   {
-    const index = tools.getRoomIndex(rooms, room);
-    if (index != -1)
-    {
-      rooms[index].users.forEach(function(user){
-        user.lines = 20;
-        user.blocks = 0;
-        user.playing = false;
-        user.waiting = false;
-      });
-    }
+    const game = tools.findGame(games, room)
+    if (game)
+      game.resetUsers();
   }
-  return rooms;
+  return games;
 }

@@ -5,8 +5,9 @@ const loginfo = debug('tetris:info')
   , tools = require('./tools')
   , ioRoutes = require('./ioRoutes')
   , app = require('./index.js')
+  , Game = require('./classes/Game')
 
-exports.connect = function(rooms, room, player_name) {
+exports.connect = function(games, room, player_name) {
   loginfo("Socket connected: " + app.socket.id)
 
   // app.socket.on('action', (action) => {
@@ -15,110 +16,69 @@ exports.connect = function(rooms, room, player_name) {
   //   }
   // })
 
-  const findUser = function(room, player_name) {
-    let findUser = -1;
-    for (let i = 0; i < room.users.length; i++)
-    {
-      if (room.users[i].name == player_name)
-        findUser = i;
-    }
-    return findUser;
-  }
-
   if (room && player_name)
   {
-    const index = tools.getRoomIndex(rooms, room);
+    const index = tools.getGameIndex(games, room);
     if (index != -1)
     {
-      if (findUser(rooms[index], player_name) != -1)
+      if (tools.findUser(games[index], player_name) != -1)
       {
         app.socket.emit(ioRoutes.GAME_ERROR_EVENT, {message: 'Name already used.'});
         room = null;
         player_name = null;
       }
-      else if (rooms[index].launched)
+      else if (games[index].launched)
       {
         app.socket.emit(ioRoutes.GAME_ERROR_EVENT, {message: 'Game already launched'});
         app.socket.join(room);
-        if (rooms[index].admin == null)
-          rooms[index].admin = player_name;
-        rooms[index].users.push({
-          name: player_name,
-          lines: 20,
-          blocks: 0,
-          playing: false,
-          waiting: true
-        });
-        ioController.getGames(rooms);
-        ioController.getGame(rooms, room);
+        games[index].addUser(player_name);
+        ioController.getGames(games);
+        ioController.getGame(games, room);
       }
       else {
         app.socket.join(room);
-        if (rooms[index].admin == null)
-          rooms[index].admin = player_name;
-        rooms[index].users.push({
-          name: player_name,
-          lines: 20,
-          blocks: 0,
-          playing: false,
-          waiting: false
-        });
-        ioController.getGames(rooms);
-        ioController.getGame(rooms, room);
+        games[index].addUser(player_name);
+        ioController.getGames(games);
+        ioController.getGame(games, room);
       }
     }
     else {
       app.socket.join(room);
-      rooms.push({
-        id: room,
-        launched: false,
-        admin: player_name,
-        users: [{
-          name: player_name,
-          lines: 20,
-          blocks: 0,
-          playing: false,
-          waiting: false
-        }],
-        piecesWaiting: []
-      });
-      ioController.getGames(rooms);
-      ioController.getGame(rooms, room);
+      const newGame = new Game(room);
+      newGame.addUser(player_name);
+      games.push(newGame);
+      ioController.getGames(games);
+      ioController.getGame(games, room);
     }
   }
   else
     app.socket.join(app.socket.id)
   return ({
-    'rooms': rooms,
+    'games': games,
     'room': room,
     'player_name': player_name
   });
 }
 
-exports.disconnect = function(rooms, room, player_name) {
+exports.disconnect = function(games, room, player_name) {
   console.log(`Client ${app.socket.id} diconnected`);
 
   if (room && player_name)
   {
-    const index = tools.getRoomIndex(rooms, room);
+    const index = tools.getGameIndex(games, room);
     if (index != -1)
     {
-      const userIndex = tools.getUserIndex(rooms[index].users, player_name);
-      rooms[index].users.splice(userIndex, 1);
-      if (rooms[index].admin == player_name)
-        rooms[index].admin = null;
-      if (rooms[index].admin == null && rooms[index].users[0])
-        rooms[index].admin = rooms[index].users[0].name;
-      if (rooms[index].users.length == 0)
+      games[index].removeUser(player_name)
+      if (games[index].users.length == 0)
       {
         app.socket.leave(room);
-        rooms.splice(index, 1);
+        games.splice(index, 1);
       }
     }
-    ioController.getGame(rooms, room);
-    ioController.getGames(rooms);
+    ioController.getGame(games, room);
+    ioController.getGames(games);
   }
   else
     app.socket.leave(app.socket.id);
-  return (rooms);
+  return (games);
 }

@@ -31,10 +31,10 @@ const initApp = (app, params, cb) => {
 }
 
 const initEngine = io => {
-  let rooms = [];
+  let games = [];
 
   exports.io = io;
-  exports.rooms = rooms;
+  exports.games = games;
 
   io.on('connection', function(socket) {
     exports.socket = socket;
@@ -42,16 +42,16 @@ const initEngine = io => {
     let { room, player_name } = socket.handshake.query;
     let connectData = {};
 
-    connectData = ioConnect.connect(rooms, room, player_name);
-    rooms = connectData.rooms;
+    connectData = ioConnect.connect(games, room, player_name);
+    games = connectData.games;
     room = connectData.room;
     player_name = connectData.player_name;
 
     socket.on("disconnect", () => {
-      rooms = ioConnect.disconnect(rooms, room, player_name)
+      games = ioConnect.disconnect(games, room, player_name)
     });
 
-    ioRoutes.initRoute(socket, rooms, room, player_name);
+    ioRoutes.initRoute(socket, games, room, player_name);
   });
 }
 

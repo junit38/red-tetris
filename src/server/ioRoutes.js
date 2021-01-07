@@ -17,24 +17,24 @@ const GET_USERS_EVENT = "getUsers";
 const SEND_LINES_EVENT = "sendLines";
 const RESET_GAME_EVENT = "resetGame";
 
-exports.initRoute = function(socket, rooms, room, player_name) {
+exports.initRoute = function(socket, games, room, player_name) {
   socket.on(GET_GAME_ID_EVENT, () => {
-    rooms = ioController.getGameId(rooms);
-    ioController.getGames(rooms);
+    games = ioController.getGameId(games);
+    ioController.getGames(games);
   });
 
   socket.on(GET_GAME_EVENT, () => {
-    ioController.getGame(rooms, room);
+    ioController.getGame(games, room);
   });
 
   socket.on(GET_GAMES_EVENT, () => {
-    ioController.getGames(rooms);
+    ioController.getGames(games);
   });
 
   socket.on(LAUNCH_GAME_EVENT, () => {
-    rooms = ioController.launchGame(rooms, room);
-    ioController.getGames(rooms);
-    ioController.getGame(rooms, room);
+    games = ioController.launchGame(games, room);
+    ioController.getGames(games);
+    ioController.getGame(games, room);
   });
 
   socket.on(NEW_PIECE_EVENT, () => {
@@ -42,30 +42,30 @@ exports.initRoute = function(socket, rooms, room, player_name) {
   });
 
   socket.on(GAME_OVER_EVENT, () => {
-    rooms = ioController.gameOver(rooms, room, player_name);
-    ioController.getGame(rooms, room);
-    if (tools.getUsersPlaying(rooms, room) <= 1)
+    games = ioController.gameOver(games, room, player_name);
+    ioController.getGame(games, room);
+    if (tools.getUsersPlaying(games, room) <= 1)
     {
-      rooms = ioController.stopGame(rooms, room);
-      ioController.getGames(rooms);
-      ioController.getGame(rooms, room);
+      games = ioController.stopGame(games, room);
+      ioController.getGames(games);
+      ioController.getGame(games, room);
     }
   });
 
   socket.on(SEND_BLOCKS_EVENT, (blocks) => {
-    ioController.sendBlocks(rooms, room, player_name, blocks);
-    ioController.getGame(rooms, room);
-    ioController.getUsers(rooms, room);
+    ioController.sendBlocks(games, room, player_name, blocks);
+    ioController.getGame(games, room);
+    ioController.getUsers(games, room);
   });
 
   socket.on(SEND_LINES_EVENT, (lines) => {
-    ioController.sendLines(rooms, room, player_name, lines);
-    ioController.getGame(rooms, room);
+    ioController.sendLines(games, room, player_name, lines);
+    ioController.getGame(games, room);
   });
 
   socket.on(RESET_GAME_EVENT, () => {
-    rooms = ioController.resetGame(rooms, room);
-    ioController.getGame(rooms, room);
+    games = ioController.resetGame(games, room);
+    ioController.getGame(games, room);
   });
 }
 

@@ -1,8 +1,16 @@
-exports.getRoomIndex = function(rooms, room) {
-  if (rooms && room)
+exports.findGame = function(games, room) {
+  for (let i = 0; i < games.length; i++) {
+    if (games[i].id == room)
+      return (games[i]);
+  }
+  return (null);
+}
+
+exports.getGameIndex = function(games, room) {
+  if (games && room)
   {
-    for (let i = 0; i < rooms.length; i++) {
-      if (rooms[i].id == room)
+    for (let i = 0; i < games.length; i++) {
+      if (games[i].id == room)
         return (i);
     }
   }
@@ -20,11 +28,11 @@ exports.getUserIndex = function(users, player_name) {
   return (-1);
 }
 
-exports.getUsersPlaying = function(rooms, room) {
-  const index = this.getRoomIndex(rooms, room);
+exports.getUsersPlaying = function(games, room) {
+  const index = this.getGameIndex(games, room);
   if (index != -1)
   {
-    const room = rooms[index];
+    const room = games[index];
     let usersPlaying = 0;
     for (let i = 0; i < room.users.length; i++)
     {
@@ -34,4 +42,14 @@ exports.getUsersPlaying = function(rooms, room) {
     return usersPlaying;
   }
   return (-1);
+}
+
+exports.findUser = function(room, player_name) {
+  let findUser = -1;
+  for (let i = 0; i < room.users.length; i++)
+  {
+    if (room.users[i].name == player_name)
+      findUser = i;
+  }
+  return findUser;
 }
