@@ -3,7 +3,7 @@ import ReactDOM from "react-dom"
 import {connect} from 'react-redux'
 import {loadInitialDataSocket} from '../actions/alert'
 import io from "socket.io-client"
-import SOCKET_SERVER_URL from '../containers/app'
+import '../global'
 
 let socket
 
@@ -17,7 +17,7 @@ export class Test extends React.Component{
   {
      super(props)
      const {dispatch} = this.props
-     socket = io.connect("http://localhost:3004")
+     socket = io.connect(SOCKET_SERVER_URL)
      dispatch(loadInitialDataSocket(socket))
   }
 

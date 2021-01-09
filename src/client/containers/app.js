@@ -6,8 +6,6 @@ import { Tetris } from '../components/Tetris'
 import { OnBoarding } from '../components/OnBoarding'
 import { Test } from '../components/Test'
 
-export const SOCKET_SERVER_URL = "http://localhost:3004";
-
 const App = ({message}) => {
   return (
     <HashRouter basename="/#">

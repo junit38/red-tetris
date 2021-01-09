@@ -1,5 +1,4 @@
 import { ALERT_POP } from '../actions/alert'
-const initialState = { items: [] }
 
 const reducer = (state = {} , action) => {
   switch(action.type){
