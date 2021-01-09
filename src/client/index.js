@@ -9,7 +9,7 @@ import reducer from './reducers'
 import App from './containers/app'
 import {alert} from './actions/alert'
 
-const initialState = {}
+const initialState = { items: [] }
 
 const store = createStore(
   reducer,

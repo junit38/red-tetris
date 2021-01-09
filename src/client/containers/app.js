@@ -4,6 +4,9 @@ import { BrowserRouter as HashRouter, Switch, Route } from "react-router-dom";
 import { NavBar } from '../components/NavBar'
 import { Tetris } from '../components/Tetris'
 import { OnBoarding } from '../components/OnBoarding'
+import { Test } from '../components/Test'
+
+export const SOCKET_SERVER_URL = "http://localhost:3004";
 
 const App = ({message}) => {
   return (
@@ -19,9 +22,7 @@ const App = ({message}) => {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    message: state.message
-  }
+  return {...state};
 }
 export default connect(mapStateToProps, null)(App)
 

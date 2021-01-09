@@ -1,9 +1,18 @@
 import { ALERT_POP } from '../actions/alert'
+const initialState = { items: [] }
 
 const reducer = (state = {} , action) => {
   switch(action.type){
     case ALERT_POP:
-      return { message: action.message }
+      return {
+        ...state,
+        message: action.message
+      }
+    case 'INITIAL_ITEMS':
+      return {
+        ...state,
+        items: action.items
+      }
     default:
       return state
   }

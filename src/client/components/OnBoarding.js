@@ -5,7 +5,10 @@ import { useHistory } from "react-router-dom";
 import { Games } from './Games';
 import GamesService from "../services/GamesService";
 
-export const OnBoarding = () => {
+import {loadInitialDataSocket} from '../actions/alert'
+import Test from "./Test";
+
+export const OnBoarding = (props) => {
   const [login, setLogin] = useState(0);
   const [game, setGame] = useState(0);
   const {gameId, getGameId, games} = GamesService()
@@ -50,6 +53,7 @@ export const OnBoarding = () => {
 
   return (
     <div className="jumbotron">
+      <Test selectGame={selectGame} />
       <fieldset>
         <div className="form-group">
           <label htmlFor="login">Login</label>
