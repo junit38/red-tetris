@@ -1,1 +1,11 @@
 global.SOCKET_SERVER_URL = "http://localhost:3004";
+global.GET_GAME_ID_EVENT = "getGameId";
+global.GET_USERS_EVENT= "getUsers";
+global.GET_GAME_EVENT = "getGame";
+global.GAME_ERROR_EVENT = "gameError";
+global.LAUNCH_GAME_EVENT = "launchGame";
+global.NEW_PIECE_EVENT = "newPiece";
+global.GAME_OVER_EVENT = "gameOver";
+global.SEND_BLOCKS_EVENT = "sendBlocks";
+global.SEND_LINES_EVENT = "sendLines";
+global.RESET_GAME_EVENT = "resetGame";

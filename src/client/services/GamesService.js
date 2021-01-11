@@ -3,25 +3,21 @@ import socketIOClient from "socket.io-client";
 
 const GET_GAME_ID_EVENT = "getGameId";
 const GET_GAMES_EVENT = "getGames";
-const SOCKET_SERVER_URL = "http://localhost:3004";
+
+import '../global'
+import {loadGamesEvent, getGamesEvent, getGameIdEvent} from '../actions/games'
+import {useStore} from 'react-redux';
 
 const GamesService = () => {
-  const [gameId, setGameId] = useState(null);
-  const [games, setGames] = useState([]);
   const socketRef = useRef();
+  const store = useStore();
 
   useEffect(() => {
     socketRef.current = socketIOClient(SOCKET_SERVER_URL);
 
-    socketRef.current.on(GET_GAME_ID_EVENT, (data) => {
-      setGameId(data.room)
-    });
+    store.dispatch(loadGamesEvent(socketRef.current));
 
-    socketRef.current.on(GET_GAMES_EVENT, (data) => {
-      setGames(data);
-    });
-
-    socketRef.current.emit(GET_GAMES_EVENT);
+    socketRef.current.emit(GET_GAMES_EVENT)
 
     return () => {
       socketRef.current.disconnect();
@@ -29,10 +25,14 @@ const GamesService = () => {
   }, []);
 
   const getGameId = () => {
-    socketRef.current.emit(GET_GAME_ID_EVENT);
+    socketRef.current.emit(GET_GAME_ID_EVENT)
   };
 
-  return { games, gameId, getGameId };
+  const getSocketRef = () => {
+    return socketRef;
+  }
+
+  return { getGameId, getSocketRef };
 };
 
 export default GamesService;

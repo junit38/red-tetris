@@ -27,8 +27,8 @@ class User {
     this.lines = lines;
   }
 
-  addBlock(blocks) {
-    this.block += blocks;
+  addBlocks(blocks) {
+    this.blocks += blocks;
   }
 }
 

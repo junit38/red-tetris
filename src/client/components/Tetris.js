@@ -6,7 +6,8 @@ import { Game } from './Game';
 import { Spectrum } from './Spectrum';
 import GameService from "../services/GameService";
 
-const LAUNCH_GAME_EVENT = "launchGame";
+import '../global';
+import {useSelector} from 'react-redux';
 
 export const Tetris = () => {
   const location = useLocation();
@@ -14,14 +15,21 @@ export const Tetris = () => {
   const player_name_unformated = location.pathname.substring(1).split('[')[1]
   const index = player_name_unformated.indexOf(']')
   const player_name = player_name_unformated.substring(0, index);
-  const {game, error, launchGame, getNewPiece, gameOver, sendBlocks, sendLines, resetGame, getSocketRef} = GameService(room, player_name)
+  const {launchGame, getNewPiece, gameOver, sendBlocks, sendLines, resetGame, getSocketRef} = GameService(room, player_name)
   const [alertSended, setAlertSended] = useState(false);
   const socketRef = getSocketRef();
+
+  let game = useSelector(state=>state.game);
+  let error = useSelector(state=>state.error);
 
   useEffect(() => {
     socketRef.current.on(LAUNCH_GAME_EVENT, () => {
       setAlertSended(false);
     });
+
+    return () => {
+      socketRef.current.off(LAUNCH_GAME_EVENT);
+    };
   }, []);
 
   const getUser = (game) => {
@@ -133,8 +141,7 @@ export const Tetris = () => {
               sendLines={sendLines}
               getSocketRef={getSocketRef}/>
         <Spectrum game={game}
-                  player_name={player_name}
-                  getSocketRef={getSocketRef}/>
+                  player_name={player_name}/>
       </div>
     )
   else

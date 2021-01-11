@@ -1,34 +1,39 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Link, useLocation } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { useHistory } from "react-router-dom";
 import { Games } from './Games';
 import GamesService from "../services/GamesService";
 
-import {loadInitialDataSocket} from '../actions/alert'
-import Test from "./Test";
+import '../global';
+import {useSelector} from 'react-redux';
 
 export const OnBoarding = (props) => {
   const [login, setLogin] = useState(0);
   const [game, setGame] = useState(0);
-  const {gameId, getGameId, games} = GamesService()
+  const {getGameId, getSocketRef} = GamesService()
+  const socketRef = getSocketRef();
   let history = useHistory();
-  let gameElem = null;
+  let games = [];
+
+  games = useSelector(state=>state.games);
 
   useEffect(() => {
-    if (gameId) {
-      history.push(gameId + "[" + login + "]");
-    }
-  })
+    socketRef.current.on(GET_GAME_ID_EVENT, (res)=>{
+      history.push(res.room + "[" + login + "]");
+    });
+
+    return () => {
+      socketRef.current.off(GET_GAME_ID_EVENT);
+    };
+  }, [])
 
   const selectGame = (game) => {
     setGame(game);
-    gameElem = <div>game.id</div>
   }
 
   const unselectGame = () => {
     setGame(null);
-    gameElem = null;
   }
 
   const handleClick = (e) => {
@@ -53,7 +58,6 @@ export const OnBoarding = (props) => {
 
   return (
     <div className="jumbotron">
-      <Test selectGame={selectGame} />
       <fieldset>
         <div className="form-group">
           <label htmlFor="login">Login</label>

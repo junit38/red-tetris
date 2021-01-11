@@ -83,7 +83,7 @@ exports.sendBlocks = function(games, room, player_name, blocks) {
     if (game)
     {
       if (game.users)
-        game.addUserBlocks(player_name, blocks);
+        game.addUsersBlocks(player_name, blocks);
     }
   }
   return games;

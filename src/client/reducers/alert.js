@@ -7,10 +7,20 @@ const reducer = (state = {} , action) => {
         ...state,
         message: action.message
       }
-    case 'INITIAL_ITEMS':
+    case 'GET_GAMES':
       return {
         ...state,
-        items: action.items
+        games: action.games
+      }
+    case 'GET_GAME':
+      return {
+        ...state,
+        game: action.game
+      }
+    case 'GET_ERROR':
+      return {
+        ...state,
+        error: action.error.message
       }
     default:
       return state

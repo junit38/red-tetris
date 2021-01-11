@@ -1,7 +1,6 @@
 import React, {useEffect,useState} from 'react'
 
-const NEW_PIECE_EVENT = "newPiece";
-const GET_USERS_EVENT = "getUsers";
+import '../global';
 
 export const Game = (props) => {
   const game = props.game;
@@ -65,6 +64,7 @@ export const Game = (props) => {
 
     return () => {
       socketRef.current.off(NEW_PIECE_EVENT);
+      socketRef.current.off(GET_USERS_EVENT);
       clearInterval(interval);
       document.removeEventListener("keydown", handleKeyDown, false);
     };
@@ -98,7 +98,6 @@ export const Game = (props) => {
   }
 
   const checkGameOver = (send) => {
-    console.log(game);
     if (piece && containPieceForm(piece, piece.form))
       gameOver();
   }

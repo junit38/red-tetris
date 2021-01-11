@@ -4,7 +4,6 @@ import { BrowserRouter as HashRouter, Switch, Route } from "react-router-dom";
 import { NavBar } from '../components/NavBar'
 import { Tetris } from '../components/Tetris'
 import { OnBoarding } from '../components/OnBoarding'
-import { Test } from '../components/Test'
 
 const App = ({message}) => {
   return (
