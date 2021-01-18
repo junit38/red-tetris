@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import socketIOClient from "socket.io-client";
 
 const GET_GAME_ID_EVENT = "getGameId";

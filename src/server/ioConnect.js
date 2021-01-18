@@ -10,11 +10,11 @@ const loginfo = debug('tetris:info')
 exports.connect = function(games, room, player_name) {
   loginfo("Socket connected: " + app.socket.id)
 
-  // app.socket.on('action', (action) => {
-  //   if(action.type === 'server/ping'){
-  //     app.socket.emit('action', {type: 'pong'})
-  //   }
-  // })
+  app.socket.on('action', (action) => {
+    if(action.type === 'server/ping'){
+      app.socket.emit('action', {type: 'pong'})
+    }
+  })
 
   if (room && player_name)
   {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { useHistory } from "react-router-dom";

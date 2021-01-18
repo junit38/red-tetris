@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from "react-router-dom";
-import socketIOClient from "socket.io-client";
 import { Board } from './Board';
 import { Game } from './Game';
 import { Spectrum } from './Spectrum';
