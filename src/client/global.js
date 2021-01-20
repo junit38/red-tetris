@@ -1,5 +1,6 @@
 global.SOCKET_SERVER_URL = "http://localhost:3004";
 global.GET_GAME_ID_EVENT = "getGameId";
+global.GET_GAMES_EVENT = "getGames";
 global.GET_USERS_EVENT= "getUsers";
 global.GET_GAME_EVENT = "getGame";
 global.GAME_ERROR_EVENT = "gameError";

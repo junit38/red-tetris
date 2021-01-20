@@ -1,5 +1,4 @@
 export const GET_GAMES_EVENT = "getGames";
-export const GET_GAME_ID_EVENT = "getGameId";
 
 export const getGamesAction = (res) => ({
   type: "GET_GAMES",
