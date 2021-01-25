@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">11.11% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>9/9</span>
+        <span class='fraction'>1/9</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">93.75% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>15/16</span>
+        <span class='fraction'>0/16</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>6/6</span>
+        <span class='fraction'>0/6</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">11.11% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>9/9</span>
+        <span class='fraction'>1/9</span>
       </div>
     </div>
   </div>
-  <div class='status-line high'></div>
+  <div class='status-line low'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -133,26 +133,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">31×</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9×</span>
-<span class="cline-any cline-yes">9×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -160,6 +149,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -178,21 +171,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -202,7 +202,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const User = require('./User')
 &nbsp;
 class Game {
-  constructor(id) {
+<span class="fstat-no" title="function not covered" >  constructor(id) {</span>
     this.id = id;
     this.launched = false;
     this.admin = null;
@@ -211,15 +211,15 @@ class Game {
   }
 &nbsp;
   addUser(user) {
-    if (this.admin == null)
+<span class="cstat-no" title="statement not covered" >    if (this.admin == null)</span>
       this.admin = user;
     const newUser = new User(user)
     this.users.push(newUser);
   }
 &nbsp;
   getUserIndex(user) {
-    for (let i = 0; i &lt; this.users.length; i++) {
-      if (this.users[i].name == user)
+<span class="cstat-no" title="statement not covered" >    for (let i = 0; i &lt; this.users.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >      if (this.users[i].name == user)</span>
         return (i);
     }
   return (-1);
@@ -228,9 +228,9 @@ class Game {
   removeUser(user) {
     const userIndex = this.getUserIndex(user);
     this.users.splice(userIndex, 1);
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (this.admin == user)
+<span class="cstat-no" title="statement not covered" >    if (this.admin == user)</span>
       this.admin = null;
-    if (this.admin == null &amp;&amp; this.users[0])
+<span class="cstat-no" title="statement not covered" >    if (this.admin == null &amp;&amp; this.users[0])</span>
       this.admin = this.users[0].name;
   }
 &nbsp;
@@ -243,34 +243,34 @@ class Game {
   }
 &nbsp;
   resetUsers() {
-    this.users.forEach(function(user){
+    this.users.forEach(<span class="fstat-no" title="function not covered" >function(user){</span>
       user.reset();
     });
   }
 &nbsp;
   startPlaying () {
-    this.users.forEach(function(user){
+    this.users.forEach(<span class="fstat-no" title="function not covered" >function(user){</span>
       user.startPlaying();
     });
   }
 &nbsp;
   addUsersBlocks(sender, blocks) {
-    this.users.forEach(function(user) {
-      if (user.name != sender)
+    this.users.forEach(<span class="fstat-no" title="function not covered" >function(user) {</span>
+<span class="cstat-no" title="statement not covered" >      if (user.name != sender)</span>
         user.addBlocks(blocks);
     });
   }
 &nbsp;
   setUserLines(userName, lines) {
-    this.users.forEach(function(user) {
-      if (user.name == userName)
+    this.users.forEach(<span class="fstat-no" title="function not covered" >function(user) {</span>
+<span class="cstat-no" title="statement not covered" >      if (user.name == userName)</span>
         user.setLines(lines);
     });
   }
 &nbsp;
   stopUserPlaying(userName) {
-    this.users.forEach(function(user) {
-      if (user.name == userName)
+    this.users.forEach(<span class="fstat-no" title="function not covered" >function(user) {</span>
+<span class="cstat-no" title="statement not covered" >      if (user.name == userName)</span>
         user.stopPlaying()
     });
   }
@@ -283,7 +283,7 @@ module.exports = Game;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Jan 20 2021 17:24:19 GMT+0100 (Central European Standard Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Jan 25 2021 15:53:25 GMT+0100 (Central European Standard Time)
 </div>
 </div>
 <script src="../../prettify.js"></script>

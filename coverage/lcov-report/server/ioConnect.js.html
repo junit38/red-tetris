@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">87.5% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>7/8</span>
+        <span class='fraction'>0/8</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">70% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>14/20</span>
+        <span class='fraction'>0/20</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>3/3</span>
+        <span class='fraction'>0/3</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">87.5% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>7/8</span>
+        <span class='fraction'>0/8</span>
       </div>
     </div>
   </div>
-  <div class='status-line high'></div>
+  <div class='status-line low'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -140,17 +140,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -192,13 +192,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -220,21 +220,21 @@ const loginfo = debug('tetris:info')
   , app = require('./index.js')
   , Game = require('./classes/Game')
 &nbsp;
-exports.connect = function(games, room, player_name) {
+exports.connect = <span class="fstat-no" title="function not covered" >function(games, room, player_name) {</span>
   loginfo("Socket connected: " + app.socket.id)
 &nbsp;
-  app.socket.on('action', (action) =&gt; {
-    <span class="missing-if-branch" title="else path not taken" >E</span>if(action.type === 'server/ping'){
+  app.socket.on('action', <span class="fstat-no" title="function not covered" >(action) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if(action.type === 'server/ping'){</span>
       app.socket.emit('action', {type: 'pong'})
     }
   })
 &nbsp;
-  if (room &amp;&amp; player_name)
+<span class="cstat-no" title="statement not covered" >  if (room &amp;&amp; player_name)</span>
   {
     const index = tools.getGameIndex(games, room);
-    if (index != -1)
+<span class="cstat-no" title="statement not covered" >    if (index != -1)</span>
     {
-      <span class="missing-if-branch" title="else path not taken" >E</span>if (tools.findUser(games[index], player_name) != -1)
+<span class="cstat-no" title="statement not covered" >      if (tools.findUser(games[index], player_name) != -1)</span>
       {
         app.socket.emit(ioRoutes.GAME_ERROR_EVENT, {message: 'Name already used.'});
         room = null;
@@ -273,16 +273,16 @@ exports.connect = function(games, room, player_name) {
   });
 }
 &nbsp;
-exports.disconnect = function(games, room, player_name) {
+exports.disconnect = <span class="fstat-no" title="function not covered" >function(games, room, player_name) {</span>
   console.log(`Client ${app.socket.id} diconnected`);
 &nbsp;
-  if (room &amp;&amp; player_name)
+<span class="cstat-no" title="statement not covered" >  if (room &amp;&amp; player_name)</span>
   {
     const index = tools.getGameIndex(games, room);
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (index != -1)
+<span class="cstat-no" title="statement not covered" >    if (index != -1)</span>
     {
       games[index].removeUser(player_name)
-      <span class="missing-if-branch" title="else path not taken" >E</span>if (games[index].users.length == 0)
+<span class="cstat-no" title="statement not covered" >      if (games[index].users.length == 0)</span>
       {
         app.socket.leave(room);
         games.splice(index, 1);
@@ -301,7 +301,7 @@ exports.disconnect = function(games, room, player_name) {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Jan 20 2021 17:24:19 GMT+0100 (Central European Standard Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Jan 25 2021 15:53:25 GMT+0100 (Central European Standard Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

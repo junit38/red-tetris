@@ -9,8 +9,8 @@ import '../global';
 import {useSelector} from 'react-redux';
 
 export const OnBoarding = (props) => {
-  const [login, setLogin] = useState(0);
-  const [game, setGame] = useState(0);
+  const [login, setLogin] = useState('');
+  const [game, setGame] = useState(null);
   const {getGameId, getSocketRef} = GamesService()
   const socketRef = getSocketRef();
   let history = useHistory();

@@ -18,9 +18,12 @@ exports.getGameId = function (games) {
 
   const newGame = new Game(room);
   games.push(newGame);
-  app.io.in(app.socket.id).emit(ioRoutes.GET_GAME_ID_EVENT, {
-    room: room
-  });
+  if (app && app.io && app.socket)
+  {
+    app.io.in(app.socket.id).emit(ioRoutes.GET_GAME_ID_EVENT, {
+      room: room
+    });
+  }
   return (games);
 }
 
