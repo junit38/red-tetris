@@ -113,11 +113,14 @@ export const Tetris = () => {
       )
   else if (game && !game.launched)
     return (
-      <Board launchGameBoard={launchGameBoard}
-             game={game}
-             room={room}
-             player_name={player_name}
-             isGameOver={isGameOver}/>
+      <div>
+        <h3 data-testid="board">Board</h3>
+        <Board launchGameBoard={launchGameBoard}
+               game={game}
+               room={room}
+               player_name={player_name}
+               isGameOver={isGameOver}/>
+      </div>
     )
   else if (game && game.launched && isGameOver(game))
     return (

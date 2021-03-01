@@ -10,6 +10,7 @@ import {useSelector} from 'react-redux';
 
 export const OnBoarding = (props) => {
   const [login, setLogin] = useState('');
+  const [message, setMessage] = useState('');
   const [game, setGame] = useState(null);
   const {getGameId, getSocketRef} = GamesService()
   const socketRef = getSocketRef();
@@ -37,9 +38,10 @@ export const OnBoarding = (props) => {
   }
 
   const handleClick = (e) => {
+    setMessage('')
     if (!login)
     {
-      alert('Login required');
+      setMessage('Login required');
       e.preventDefault()
     }
     else
@@ -60,22 +62,23 @@ export const OnBoarding = (props) => {
     <div className="jumbotron">
       <fieldset>
         <div className="form-group">
-          <label htmlFor="login">Login</label>
-          <input type="text" className="form-control" onChange={onChangeForm} name="login" id="login" placeholder="Enter login"/>
-          <button type="submit" className="btn btn-primary" onClick={handleClick}>
+          <label data-testid="login" htmlFor="login">Login</label>
+          <input data-testid="input" type="text" className="form-control" onChange={onChangeForm} name="login" id="login" aria-label="login-input" placeholder="Enter login"/>
+          <button data-testid="submit" type="submit" className="btn btn-primary" onClick={handleClick} id="submit" aria-label="login-button">
             { game ? "Join Game" : "Create Game" }
           </button>
+          <p data-testid="message" className="message">{ message }</p>
         </div>
       </fieldset>
       { game ?
         <div>
-          <h3>Room selected:</h3>
+          <h3 data-testid="game_selected">Room selected:</h3>
           <div className="card text-white bg-primary mb-3" style={{maxWidth: "20rem"}}>
-            <div className="card-header">{game.id}</div>
+            <div className="card-header" data-testid="game_header">{game.id}</div>
             <div className="card-body">
-              <h4 className="card-title">{game.id}</h4>
-              <p className="card-text">{game.users.length} players</p>
-              <button type="button" className="btn btn-secondary" onClick={unselectGame}>Leave</button>
+              <h4 className="card-title" data-testid="game_title">{game.id}</h4>
+              <p className="card-text" data-testid="game_players">{game.users.length} players</p>
+              <button type="button" className="btn btn-secondary" data-testid="game_button" onClick={unselectGame}>Leave</button>
             </div>
           </div>
         </div>

@@ -26,22 +26,22 @@ describe('Fake redux test', function(){
     store.dispatch(alert(MESSAGE))
   });
 
-  it('load games', function(done){
-    const initialState = {
-      games: []
-    };
-    const socket = io(params.server.url);
-    const store = configureStore(rootReducer, null, initialState, {
-      GET_GAMES: ({dispatch, getState}) =>  {
-        const state = getState()
-        state.games.should.equal([]);
-        done();
-      }
-    })
-    socket.on(GET_GAMES_EVENT,(res) => {
-      store.dispatch(getGamesAction(res))
-    })
-    socket.emit(GET_GAMES_EVENT);
-  });
+  // it('load games', function(done){
+  //   const initialState = {
+  //     games: []
+  //   };
+  //   const socket = io(params.server.url);
+  //   const store = configureStore(rootReducer, null, initialState, {
+  //     GET_GAMES: ({dispatch, getState}) =>  {
+  //       const state = getState()
+  //       state.games.should.equal([]);
+  //       done();
+  //     }
+  //   })
+  //   socket.on(GET_GAMES_EVENT,(res) => {
+  //     store.dispatch(getGamesAction(res))
+  //   })
+  //   socket.emit(GET_GAMES_EVENT);
+  // });
 
 });
