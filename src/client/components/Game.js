@@ -25,17 +25,18 @@ export const Game = (props) => {
 
     getNewPiece();
 
-    socketRef.current.on(NEW_PIECE_EVENT, (data) => {
-      setTetrisElem(getTetris());
-      piecesWaiting.push({...data});
-      if (!piece)
-      {
-        piece = piecesWaiting.shift();
-        piece.x = user.blocks;
-        checkGameOver(piece);
+    if (socketRef && socketRef.current)
+      socketRef.current.on(NEW_PIECE_EVENT, (data) => {
         setTetrisElem(getTetris());
-      }
-    });
+        piecesWaiting.push({...data});
+        if (!piece)
+        {
+          piece = piecesWaiting.shift();
+          piece.x = user.blocks;
+          checkGameOver(piece);
+          setTetrisElem(getTetris());
+        }
+      });
 
     const getUser = (users) => {
       for (let i = 0; i < users.length; i++)
@@ -46,13 +47,14 @@ export const Game = (props) => {
       return (null);
     }
 
-    socketRef.current.on(GET_USERS_EVENT, (data) => {
-      const blocks = user.blocks;
-      user = getUser(data);
-      const newBlocks = user.blocks;
-      for (let i = 0; i < newBlocks - blocks; i++)
-        piece.x++;
-    });
+    if (socketRef && socketRef.current)
+      socketRef.current.on(GET_USERS_EVENT, (data) => {
+        const blocks = user.blocks;
+        user = getUser(data);
+        const newBlocks = user.blocks;
+        for (let i = 0; i < newBlocks - blocks; i++)
+          piece.x++;
+      });
 
     const interval = setInterval(() => {
       checkPiece();

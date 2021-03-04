@@ -73,14 +73,14 @@ export const Tetris = () => {
       if (!alertSended)
       {
         setAlertSended(true);
-        alert('Game Over');
+        window.alert('Game Over');
       }
       return true;
     }
     else if (user && user.playing == true
       && getUsersPlaying(game) <= 1
       && game && getUsersPlaying(game) != getUsersNotWaiting(game))
-      alert('You Win');
+      window.alert('You Win');
     return false;
   }
 
@@ -94,9 +94,9 @@ export const Tetris = () => {
   {
     return (
       <div className="jumbotron">
-        <h3>{error}</h3>
-        <p>Waiting for the end of the game</p>
-        <Link to={`/`}>
+        <h3 data-testid="error">{error}</h3>
+        <p data-testid="waiting_message">Waiting for the end of the game</p>
+        <Link data-testid="return" to={`/`}>
           Return
         </Link>
       </div>
@@ -105,8 +105,8 @@ export const Tetris = () => {
   else if (error && !game)
     return (
       <div className="jumbotron">
-        <h3>{error}</h3>
-        <Link to={`/`}>
+        <h3 data-testid="error">{error}</h3>
+        <Link data-testid="return" to={`/`}>
           Return
         </Link>
       </div>
@@ -125,9 +125,9 @@ export const Tetris = () => {
   else if (game && game.launched && isGameOver(game))
     return (
       <div className="jumbotron">
-        <h3>Game Over</h3>
-        <p>Waiting for the end of the game...</p>
-        <Link to={`/`}>
+        <h3 data-testid="game_over">Game Over</h3>
+        <p data-testid="waiting_message">Waiting for the end of the game...</p>
+        <Link data-testid="return" to={`/`}>
           Return
         </Link>
       </div>
@@ -135,6 +135,7 @@ export const Tetris = () => {
   else if (game && game.launched)
     return (
       <div className="jumbotron">
+        <h3 data-testid="game">Game</h3>
         <Game game={game}
               player_name={player_name}
               getNewPiece={getNewPiece}
@@ -149,7 +150,7 @@ export const Tetris = () => {
   else
     return (
       <div className="jumbotron">
-        <h3>Loading...</h3>
+        <h3 data-testid="loading">Loading...</h3>
       </div>
     )
 }

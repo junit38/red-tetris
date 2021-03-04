@@ -29,7 +29,8 @@ const GameService = (room, player_name) => {
   }
 
   const getNewPiece = () => {
-    socketRef.current.emit(NEW_PIECE_EVENT);
+    if (socketRef && socketRef.current)
+      socketRef.current.emit(NEW_PIECE_EVENT);
   }
 
   const gameOver = () => {
