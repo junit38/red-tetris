@@ -3,6 +3,8 @@ import {OnBoarding} from "../src/client/components/OnBoarding"
 import {Games} from "../src/client/components/Games"
 import {NavBar} from "../src/client/components/NavBar"
 import {Tetris} from "../src/client/components/Tetris"
+import {Board} from "../src/client/components/Board"
+
 import expect from "expect"
 
 import {fireEvent} from '@testing-library/react'
@@ -463,5 +465,122 @@ describe('<Tetris />', () => {
     expect(
       container.querySelector("[data-testid='game']").textContent
     ).toEqual("Game");
+  })
+});
+
+describe('<Board />', () => {
+
+  let container = null;
+  beforeEach(() => {
+    // met en place un élément DOM comme cible de rendu
+    container = document.createElement("div");
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    // nettoie en sortie de test
+    unmountComponentAtNode(container);
+    container.remove();
+    container = null;
+  });
+
+  it("render properly", () => {
+    const initialState = { games: [], game: null, error: null }
+
+    const store = createStore(
+      reducer,
+      initialState,
+      applyMiddleware(thunk, createLogger())
+    )
+
+    const game = {
+      id: 'room_0',
+      launched: false,
+      users: [
+        {
+          name: 'player_name'
+        }
+      ],
+      admin: 'player_name'
+    }
+    const room = 'room_0';
+    const player_name = 'player_name';
+
+    act(() => {
+      render(
+        <Provider store={store}>
+          <Board game={game}
+               room={room}
+               player_name={player_name}/>
+        </Provider>,
+        container
+      );
+    });
+
+    expect(
+      container.querySelector("[data-testid='game_id']").textContent
+    ).toEqual("room_0");
+
+    expect(
+      container.querySelector("[data-testid='game_title']").textContent
+    ).toEqual("room_0");
+
+    expect(
+      container.querySelector("[data-testid='game_users']").textContent
+    ).toEqual("1 players");
+
+    expect(
+      container.querySelector("[data-testid='game_launch']").textContent
+    ).toEqual("Launch");
+  })
+
+  it("render properly with no admin", () => {
+    const initialState = { games: [], game: null, error: null }
+
+    const store = createStore(
+      reducer,
+      initialState,
+      applyMiddleware(thunk, createLogger())
+    )
+
+    const game = {
+      id: 'room_0',
+      launched: false,
+      users: [
+        {
+          name: 'player_name'
+        }
+      ],
+      admin: 'player_name_2'
+    }
+    const room = 'room_0';
+    const player_name = 'player_name';
+
+    act(() => {
+      render(
+        <Provider store={store}>
+          <Board game={game}
+               room={room}
+               player_name={player_name}/>
+        </Provider>,
+        container
+      );
+    });
+
+    expect(
+      container.querySelector("[data-testid='game_id']").textContent
+    ).toEqual("room_0");
+
+    expect(
+      container.querySelector("[data-testid='game_title']").textContent
+    ).toEqual("room_0");
+
+    expect(
+      container.querySelector("[data-testid='game_users']").textContent
+    ).toEqual("1 players");
+
+    expect(
+      container.querySelector("[data-testid='game_launch']")
+    ).toEqual(null);
   })
 });

@@ -10,12 +10,12 @@ export const Board = (props) => {
   return (
     <div className="jumbotron">
       <div className="card border-primary mb-3">
-        <div className="card-header">{game.id}</div>
+        <div className="card-header" data-testid="game_id">{game.id}</div>
         <div className="card-body">
-          <h4 className="card-title">{game.id}</h4>
-          <p className="card-text">{game.users.length} players</p>
+          <h4 className="card-title" data-testid="game_title">{game.id}</h4>
+          <p className="card-text" data-testid="game_users">{game.users.length} players</p>
           { game && game.admin && game.admin == player_name && game.launched == false ?
-            <button type="button" className="btn btn-secondary" onClick={launchGameBoard}>Launch</button>
+            <button type="button" className="btn btn-secondary" onClick={launchGameBoard} data-testid="game_launch">Launch</button>
           : '' }
         </div>
       </div>
