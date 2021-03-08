@@ -47,6 +47,8 @@ export const Game = (props) => {
       return (null);
     }
 
+    user = getUser(game.users);
+
     if (socketRef && socketRef.current)
       socketRef.current.on(GET_USERS_EVENT, (data) => {
         const blocks = user.blocks;
@@ -65,8 +67,10 @@ export const Game = (props) => {
     }, 1000);
 
     return () => {
-      socketRef.current.off(NEW_PIECE_EVENT);
-      socketRef.current.off(GET_USERS_EVENT);
+      if (socketRef && socketRef.current) {
+        socketRef.current.off(NEW_PIECE_EVENT);
+        socketRef.current.off(GET_USERS_EVENT);
+      }
       clearInterval(interval);
       document.removeEventListener("keydown", handleKeyDown, false);
     };
@@ -319,7 +323,7 @@ export const Game = (props) => {
   }
 
   const checkPiece = () => {
-    if (piece.x + getFormHight(piece.form) == 19 || !canMoveDown(piece))
+    if (piece && (piece.x + getFormHight(piece.form) == 19 || !canMoveDown(piece)))
     {
       pieces.push(piece);
       piece = null;
@@ -457,17 +461,21 @@ export const Game = (props) => {
         let containPiece = getContainPiece(i, j, true);
         if (containPiece) {
           let style = {...brickStyle};
+          const testid = 'brick_piece';
           style.backgroundColor = containPiece.color;
-            brick = <div className="brick" style={style} key={j}></div>
+            brick = <div data-testid={testid} className="brick" style={style} key={j}></div>
         }
         tetrisLine.push(brick)
       }
-      tetris.push(<div className="line" style={lineStyle} key={i}>
+      const testid = 'line_' + i
+      tetris.push(<div data-testid={testid} className="line" style={lineStyle} key={i}>
         {tetrisLine}
         </div>)
     }
-    for (let i = 0; i < user.blocks; i++)
-      tetris.push(<div className="lineBlock" style={lineBlockStyle} key={i}></div>)
+    for (let i = 0; i < user.blocks; i++) {
+      const testid = 'block_' + i;
+      tetris.push(<div data-testid={testid} className="lineBlock" style={lineBlockStyle} key={i}></div>)
+    }
     return tetris;
   }
 

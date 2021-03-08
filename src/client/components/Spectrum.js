@@ -42,20 +42,22 @@ export const Spectrum = (props) => {
       {
         if (game.users[i].lines > j + game.users[i].blocks)
         {
+          const testid = 'line_' + j
           spectrumLines.push(
-            <div className="line" style={lineStyle} key={j}></div>
+            <div data-testid={testid} className="line" style={lineStyle} key={j}></div>
           )
         }
         else
         {
+          const testid = 'line_occupied_' + j
           spectrumLines.push(
-            <div className="line" style={lineOccupedStyle} key={j}></div>
+            <div data-testid={testid} className="line" style={lineOccupedStyle} key={j}></div>
           )
         }
       }
       spectrum.push(
         <div style={userContainerStyle} key={game.users[i].name}>
-          <h4>{game.users[i].name}</h4>
+          <h4 data-testid="username">{game.users[i].name}</h4>
           <div className="spectrum" style={userSpectrumStyle}>
             {spectrumLines}
           </div>
