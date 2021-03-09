@@ -15,17 +15,15 @@ export const Game = (props) => {
   const [tetrisElem, setTetrisElem] = useState([]);
   const socketRef = getSocketRef();
   let tetris = [];
-  let piece = null;
-  let user = {
-    blocks: 0
-  }
+  let piece = props.piece;
+  let user = props.user ? props.user : {blocks: 0};
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown, false);
 
     getNewPiece();
 
-    if (socketRef && socketRef.current)
+    if (socketRef && socketRef.current) {
       socketRef.current.on(NEW_PIECE_EVENT, (data) => {
         setTetrisElem(getTetris());
         piecesWaiting.push({...data});
@@ -37,6 +35,7 @@ export const Game = (props) => {
           setTetrisElem(getTetris());
         }
       });
+    }
 
     const getUser = (users) => {
       for (let i = 0; i < users.length; i++)
@@ -46,8 +45,6 @@ export const Game = (props) => {
       }
       return (null);
     }
-
-    user = getUser(game.users);
 
     if (socketRef && socketRef.current)
       socketRef.current.on(GET_USERS_EVENT, (data) => {
@@ -457,11 +454,11 @@ export const Game = (props) => {
       let tetrisLine = [];
       for (let j = 0; j < 10; j++)
       {
-        let brick = <div className="brick" style={brickStyle} key={j}></div>
+        let brick = <div data-testid="brick" className="brick" style={brickStyle} key={j}></div>
         let containPiece = getContainPiece(i, j, true);
         if (containPiece) {
           let style = {...brickStyle};
-          const testid = 'brick_piece';
+          const testid = 'brick_piece_' + i + '_' + j;
           style.backgroundColor = containPiece.color;
             brick = <div data-testid={testid} className="brick" style={style} key={j}></div>
         }
@@ -483,7 +480,7 @@ export const Game = (props) => {
     setTetrisElem(getTetris());
 
   return (
-    <div style={gameStyle} onKeyDown={handleKeyDown}>
+    <div data-testid='game' style={gameStyle} onKeyDown={handleKeyDown}>
       <div className="tetris" style={tetrisStyle}>{tetrisElem}</div>
     </div>
   )

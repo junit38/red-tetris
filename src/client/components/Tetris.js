@@ -17,6 +17,10 @@ export const Tetris = () => {
   const {launchGame, getNewPiece, gameOver, sendBlocks, sendLines, resetGame, getSocketRef} = GameService(room, player_name)
   const [alertSended, setAlertSended] = useState(false);
   const socketRef = getSocketRef();
+  const piece = null;
+  const user = {
+    blocks: 0
+  }
 
   let game = useSelector(state=>state.game);
   let error = useSelector(state=>state.error);
@@ -113,14 +117,11 @@ export const Tetris = () => {
       )
   else if (game && !game.launched)
     return (
-      <div>
-        <h3 data-testid="board">Board</h3>
-        <Board launchGameBoard={launchGameBoard}
-               game={game}
-               room={room}
-               player_name={player_name}
-               isGameOver={isGameOver}/>
-      </div>
+      <Board launchGameBoard={launchGameBoard}
+             game={game}
+             room={room}
+             player_name={player_name}
+             isGameOver={isGameOver}/>
     )
   else if (game && game.launched && isGameOver(game))
     return (
@@ -137,6 +138,8 @@ export const Tetris = () => {
       <div className="jumbotron">
         <h3 data-testid="game">Game</h3>
         <Game game={game}
+              piece={piece}
+              user={user}
               player_name={player_name}
               getNewPiece={getNewPiece}
               gameOver={gameOver}

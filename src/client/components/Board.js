@@ -9,6 +9,7 @@ export const Board = (props) => {
 
   return (
     <div className="jumbotron">
+      <h3 data-testid="board">Board</h3>
       <div className="card border-primary mb-3">
         <div className="card-header" data-testid="game_id">{game.id}</div>
         <div className="card-body">

@@ -27,7 +27,7 @@ export const OnBoarding = (props) => {
     return () => {
       socketRef.current.off(GET_GAME_ID_EVENT);
     };
-  }, [])
+  }, [login])
 
   const selectGame = (game) => {
     setGame(game);
@@ -44,18 +44,20 @@ export const OnBoarding = (props) => {
       setMessage('Login required');
       e.preventDefault()
     }
-    else
+    else if (login)
     {
       if (game)
         history.push(game.id + "[" + login + "]");
-      else
+      else {
         getGameId();
+      }
     }
   }
 
   const onChangeForm = (e) => {
-    if (e.target.name === 'login')
+    if (e.target.name === 'login') {
       setLogin(e.target.value)
+    }
   }
 
   return (

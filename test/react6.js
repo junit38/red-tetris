@@ -47,6 +47,10 @@ describe('<Board />', () => {
     });
 
     expect(
+      container.querySelector("[data-testid='board']").textContent
+    ).toEqual("Board");
+
+    expect(
       container.querySelector("[data-testid='game_id']").textContent
     ).toEqual("room_0");
 

@@ -6,7 +6,7 @@ import {loadGameEvent, loadErrorEvent, getGameEvent} from '../actions/game'
 import {useStore} from 'react-redux';
 
 const GameService = (room, player_name) => {
-  const socketRef = {}
+  const socketRef = useRef();
   const store = useStore();
 
   useEffect(() => {

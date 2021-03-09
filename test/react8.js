@@ -7,12 +7,6 @@ import { fireEvent } from '@testing-library/react'
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
 
-import socketIOClient from "socket.io-client";
-import '../src/client/global';
-
-import { startServer } from './helpers/server'
-import params from '../params'
-
 describe('<Game />', () => {
 
   let container = null;
@@ -28,15 +22,6 @@ describe('<Game />', () => {
     container.remove();
     container = null;
   });
-
-  let tetrisServer
-  before(cb => startServer( params.server, function(err, server){
-    tetrisServer = server
-    cb()
-  }))
-
-  after(function(done){tetrisServer.stop(done)})
-
 
   it("render properly", () => {
     const game = {
@@ -85,7 +70,57 @@ describe('<Game />', () => {
     ).toEqual("");
   })
 
-  it("render properly 2", () => {
+  it("render properly with user blocks", () => {
+    const game = {
+      id: 'room_0',
+      launched: false,
+      users: [
+        {
+          name: 'player_name',
+          lines: 20,
+          blocks: 1,
+          playing: true
+        },
+        {
+          name: 'player_name_2',
+          lines: 20,
+          blocks: 0,
+          playing: true
+        }
+      ],
+      admin: 'player_name'
+    }
+    const room = 'room_0';
+    const player_name = 'player_name';
+
+    const getSocketRef = function() {
+    }
+
+    const getNewPiece = function() {
+    }
+
+    act(() => {
+      render(
+        <Game game={game}
+             piece={null}
+             user={game.users[0]}
+             player_name={player_name}
+             getSocketRef={getSocketRef}
+             getNewPiece={getNewPiece}/>,
+        container
+      );
+    });
+
+    expect(
+      container.querySelector("[data-testid='line_19']").textContent
+    ).toEqual("");
+
+    expect(
+      container.querySelector("[data-testid='block_0']").textContent
+    ).toEqual("");
+  })
+
+  it("render properly with a piece", () => {
     const game = {
       id: 'room_0',
       launched: false,
@@ -108,25 +143,63 @@ describe('<Game />', () => {
     const room = 'room_0';
     const player_name = 'player_name';
 
-    const socketRef = {};
-    socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
-      query: { room, player_name },
-    });
-
     const getSocketRef = function() {
-      return socketRef;
+      return null;
     }
 
     const getNewPiece = function() {
-      socketRef.current.emit(NEW_PIECE_EVENT);
+    }
+
+    const sendLines = function() {
+    }
+
+    const piece = {
+        "form":[
+            [0,0,0,0],
+            [1,1,1,1],
+            [0,0,0,0],
+            [0,0,0,0]
+        ],
+        "forms": [
+          [
+            [0,0,0,0],
+            [1,1,1,1],
+            [0,0,0,0],
+            [0,0,0,0]
+          ],
+          [
+            [0,1,0,0],
+            [0,1,0,0],
+            [0,1,0,0],
+            [0,1,0,0]
+          ],
+          [
+            [0,0,0,0],
+            [0,0,0,0],
+            [1,1,1,1],
+            [0,0,0,0]
+          ],
+          [
+            [0,0,1,0],
+            [0,0,1,0],
+            [0,0,1,0],
+            [0,0,1,0]
+          ]
+        ],
+        "rotation": 0,
+        "x":0,
+        "y":4,
+        "color": "cyan"
     }
 
     act(() => {
       render(
         <Game game={game}
+             piece={piece}
              player_name={player_name}
              getSocketRef={getSocketRef}
-             getNewPiece={getNewPiece}/>,
+             getNewPiece={getNewPiece}
+             sendLines={sendLines}/>,
         container
       );
     });
@@ -136,7 +209,47 @@ describe('<Game />', () => {
     ).toEqual("");
 
     expect(
-      container.querySelector("[data-testid='brick_piece']").textContent
+      container.querySelector("[data-testid='brick_piece_1_4']").textContent
+    ).toEqual("");
+
+    act(() => {
+      document.dispatchEvent(new window.KeyboardEvent("keydown", {'keyCode': 40}));
+    });
+
+    expect(
+      container.querySelector("[data-testid='brick_piece_2_4']").textContent
+    ).toEqual("");
+
+    act(() => {
+      document.dispatchEvent(new window.KeyboardEvent("keydown", {'keyCode': 37}));
+    });
+
+    expect(
+      container.querySelector("[data-testid='brick_piece_2_3']").textContent
+    ).toEqual("");
+
+    act(() => {
+      document.dispatchEvent(new window.KeyboardEvent("keydown", {'keyCode': 39}));
+    });
+
+    expect(
+      container.querySelector("[data-testid='brick_piece_2_7']").textContent
+    ).toEqual("");
+
+    act(() => {
+      document.dispatchEvent(new window.KeyboardEvent("keydown", {'keyCode': 38}));
+    });
+
+    expect(
+      container.querySelector("[data-testid='brick_piece_1_5']").textContent
+    ).toEqual("");
+
+    act(() => {
+      document.dispatchEvent(new window.KeyboardEvent("keydown", {'keyCode': 32}));
+    });
+
+    expect(
+      container.querySelector("[data-testid='brick_piece_19_5']").textContent
     ).toEqual("");
   })
 });
